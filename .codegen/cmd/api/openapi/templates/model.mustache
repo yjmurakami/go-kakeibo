@@ -1,0 +1,36 @@
+{{>partial_header}}
+package openapi
+{{#models}}{{#model}}{{#isEnum}}
+{{#description}}// {{classname}} - {{{description}}}{{/description}}
+const (
+	{{#allowableValues}}
+	{{#enumVars}}
+	{{classname}}{{#lambda.titlecase}}{{#lambda.lowercase}}{{name}}{{/lambda.lowercase}}{{/lambda.titlecase}} = {{{value}}}	// {{enumDescription}}
+	{{/enumVars}}
+	{{/allowableValues}}
+)
+
+var {{#lambda.camelcase}}{{classname}}{{/lambda.camelcase}}Map = map[{{dataType}}]string{
+	{{#allowableValues}}
+	{{#enumVars}}
+	{{classname}}{{#lambda.titlecase}}{{#lambda.lowercase}}{{name}}{{/lambda.lowercase}}{{/lambda.titlecase}}: "{{enumDescription}}",
+	{{/enumVars}}
+	{{/allowableValues}}
+}
+
+func Has{{classname}}(key {{dataType}}) bool {
+	_, ok := {{#lambda.camelcase}}{{classname}}{{/lambda.camelcase}}Map[key]
+	return ok
+}
+
+func {{classname}}Value(key {{dataType}}) string {
+	v, _ := {{#lambda.camelcase}}{{classname}}{{/lambda.camelcase}}Map[key]
+	return v
+}{{/isEnum}}{{^isEnum}}
+{{#description}}// {{classname}} - {{{description}}}{{/description}}
+type {{classname}} struct {
+{{#vars}}
+	{{name}} {{#isNullable}}*{{/isNullable}}{{{dataType}}} `json:"{{baseName}}"{{#vendorExtensions.x-go-validate}} validate:"{{{.}}}"{{/vendorExtensions.x-go-validate}}` {{#description}}// {{{description}}}{{/description}}
+{{/vars}}
+}
+{{/isEnum}}{{/model}}{{/models}}

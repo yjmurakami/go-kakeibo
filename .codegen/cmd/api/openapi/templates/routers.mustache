@@ -1,0 +1,18 @@
+{{>partial_header}}
+package server
+
+import (
+	"net/http"
+
+	"github.com/gorilla/mux"
+)
+
+func newRouter(m Middleware, hc handlerConfig) http.Handler { {{#apiInfo}}{{#apis}}
+	{{classname}}Handler := init{{classname}}Handler(hc){{/apis}}{{/apiInfo}}
+
+	mux := mux.NewRouter(){{#apiInfo}}{{#apis}}
+{{#operations}}{{#operation}}
+	mux.HandleFunc("/api{{path}}", {{#vendorExtensions.x-go-middleware}}m.{{{.}}}({{/vendorExtensions.x-go-middleware}}m.HandleError({{classname}}Handler.{{operationId}}()){{#vendorExtensions.x-go-middleware}}){{/vendorExtensions.x-go-middleware}}).Methods("{{#lambda.uppercase}}{{httpMethod}}{{/lambda.uppercase}}"){{/operation}}{{/operations}}{{/apis}}{{/apiInfo}}
+
+	return mux
+}

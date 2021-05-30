@@ -1,0 +1,9 @@
+{{>partial_header}}
+package server
+
+import "net/http"
+{{#apiInfo}}{{#apis}}
+type {{classname}}Handler interface { {{#operations}}{{#operation}}
+	{{operationId}}() func(w http.ResponseWriter, r *http.Request) error{{/operation}}{{/operations}}
+}
+{{/apis}}{{/apiInfo}}
