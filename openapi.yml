@@ -1,0 +1,194 @@
+openapi: "3.0.3"
+info:
+  title: go-kakeibo
+  version: "0.0.1"
+servers:
+  - url: http://localhost:8080
+paths:
+  /v1/categories:
+    get:
+      tags:
+        - "Category"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/V1CategoriesRes"
+  /v1/health:
+    get:
+      tags:
+        - "System"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+  /v1/incomes:
+    get:
+      tags:
+        - "Income"
+      parameters:
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Sort"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/V1IncomesRes"
+    post:
+      tags:
+        - "Income"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/V1IncomesPostReq"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/V1IncomesRes"
+  /v1/incomes/{incomeId}:
+    parameters:
+      - $ref: "#/components/parameters/IncomeId"
+    get:
+      tags:
+        - "Income"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/V1IncomesRes"
+    put:
+      tags:
+        - "Income"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/V1IncomesIncomeIdPutReq"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/V1IncomesRes"
+    delete:
+      tags:
+        - "Income"
+      responses:
+        "200":
+          description: ""
+components:
+  parameters:
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+    Sort:
+      name: sort
+      in: query
+      schema:
+        type: string
+    IncomeId:
+      name: incomeId
+      in: path
+      required: true
+      schema:
+        type: integer
+  schemas:
+    V1CategoriesRes:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+    V1IncomesPostReq:
+      type: object
+      required:
+        - "date"
+        - "categoryId"
+        - "amount"
+      properties:
+        date:
+          type: string
+          format: date
+        categoryId:
+          type: integer
+        amount:
+          type: integer
+          minimum: 1
+          maximum: 999999999
+        note:
+          type: string
+          maxLength: 1000
+    V1IncomesIncomeIdPutReq:
+      type: object
+      required:
+        - "date"
+        - "categoryId"
+        - "amount"
+      properties:
+        date:
+          type: string
+          format: date
+        categoryId:
+          type: integer
+        amount:
+          type: integer
+          minimum: 1
+          maximum: 999999999
+        note:
+          type: string
+          maxLength: 1000
+    V1IncomesRes:
+      type: object
+      properties:
+        id:
+          type: integer
+        date:
+          type: string
+          format: date
+        categoryId:
+          type: integer
+        amount:
+          type: integer
+        note:
+          type: string
