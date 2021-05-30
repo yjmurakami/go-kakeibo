@@ -1,0 +1,24 @@
+version: "3.8"
+services:
+  go-server:
+    build:
+      context: .
+    ports:
+      - 8080:8080
+    volumes:
+      - .:/go/src/go-kakeibo
+    tty: true
+  mysql-server:
+    image: "mysql:5.7.34"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - 3306:3306
+  mysql-server-test:
+    image: "mysql:5.7.34"
+    tmpfs: # テスト時間を短縮するための設定
+      - /var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - 3307:3306
