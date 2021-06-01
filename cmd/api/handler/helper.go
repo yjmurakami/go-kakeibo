@@ -23,6 +23,24 @@ type Jwt interface {
 
 // Cookie
 
+func newCookie(name string, value string, expires time.Time) *http.Cookie {
+	return &http.Cookie{
+		Name:     name,
+		Value:    value,
+		Expires:  expires,
+		Path:     "/",
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+		Secure:   false,
+	}
+}
+
+func newExpiredCookie(name string) *http.Cookie {
+	c := newCookie(name, "", time.Unix(0, 0))
+	c.MaxAge = -1
+	return c
+}
+
 // Validator
 
 func NewValidator() *validator.Validate {
