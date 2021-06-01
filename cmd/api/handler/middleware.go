@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/yjmurakami/go-kakeibo/internal/clock"
@@ -25,4 +26,19 @@ func (m *middleware) HandleError(next func(http.ResponseWriter, *http.Request) e
 			m.handleServerError(w, r, err)
 		}
 	}
+}
+
+func (m *middleware) handleServerError(w http.ResponseWriter, serverErr error) {
+
+	// TODO エラーログ
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusInternalServerError)
+	fmt.Fprint(w, http.StatusText(http.StatusInternalServerError)) // TODO JSONに変更
+}
+
+func (m *middleware) handleClientError(w http.ResponseWriter, clientErr clientError) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(clientErr.status)
+	encodeJSON(w, clientErr.body)
 }
