@@ -45,10 +45,10 @@ mkdir out/go/model
 mv out/go/model_* out/go/model/
 rename model_ "" out/go/model/*.go
 
-mv out/go/api.oa.go out/go/handler.oa.go
+mv out/go/api.oa.go out/go/interface.oa.go
 mv out/go/routers.oa.go out/go/router.oa.go
 
-sed -i -e 's/ApiHandler/Handler/g' out/go/handler.oa.go
+sed -i -e 's/ApiHandler/Handler/g' out/go/interface.oa.go
 sed -i -e 's/ApiHandler/Handler/g' out/go/router.oa.go
 
 go fmt ./...

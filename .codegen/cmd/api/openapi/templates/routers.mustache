@@ -5,9 +5,10 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/yjmurakami/go-kakeibo/cmd/api/handler"
 )
 
-func newRouter(m Middleware, hc handlerConfig) http.Handler { {{#apiInfo}}{{#apis}}
+func newRouter(m handler.MiddlewareHandler, hc handlerConfig) http.Handler { {{#apiInfo}}{{#apis}}
 	{{classname}}Handler := init{{classname}}Handler(hc){{/apis}}{{/apiInfo}}
 
 	mux := mux.NewRouter(){{#apiInfo}}{{#apis}}
