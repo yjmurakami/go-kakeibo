@@ -36,7 +36,7 @@ func Start() error {
 		container: newContainer(),
 	}
 
-	mdl := handler.NewMiddleware()
+	mdl := handler.NewMiddlewareHandler()
 	mux := newRouter(mdl, hc)
 	mux = mdl.RecoverPanic(mux)
 

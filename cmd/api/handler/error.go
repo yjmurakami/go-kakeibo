@@ -18,3 +18,13 @@ type clientError struct {
 func (e clientError) Error() string {
 	return fmt.Sprintf("status : %v, body : %v", e.status, e.body)
 }
+
+func newBadRequestError(id string, msg string) clientError {
+	// TODO
+	return clientError{}
+}
+
+func newUnauthorizedError() clientError {
+	// TODO
+	return clientError{}
+}

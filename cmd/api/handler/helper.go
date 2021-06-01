@@ -16,6 +16,10 @@ import (
 	"github.com/yjmurakami/go-kakeibo/internal/clock"
 )
 
+const (
+	cookieNameToken = "token"
+)
+
 // JWT
 
 type Jwt interface {
