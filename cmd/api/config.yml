@@ -1,0 +1,25 @@
+api:
+  port: 8080
+  idleTimeout: 60 #秒単位
+  readTimeout: 5 #秒単位
+  writeTimeout: 10 #秒単位
+  jwtKey: secret
+  jwtExpiration: 5 #分単位
+
+mysql:
+  host: mysql-server
+  port: 3306
+  username: root
+  password: password
+  maxOpenConns: 25
+  maxIdleConns: 25
+  maxLifetime: 5 #分単位
+
+mysqlTest:
+  host: mysql-server-test
+  port: 3306
+  username: root
+  password: password
+  maxOpenConns: 25
+  maxIdleConns: 25
+  maxLifetime: 5 #分単位
