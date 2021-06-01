@@ -7,10 +7,13 @@ import (
 	"io"
 	"net/http"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 
+	jwtgo "github.com/dgrijalva/jwt-go"
 	"github.com/go-playground/validator/v10"
+	"github.com/yjmurakami/go-kakeibo/internal/clock"
 )
 
 // JWT
@@ -19,6 +22,85 @@ type Jwt interface {
 	NewToken(userId int) (string, error)
 	DecodeToken(tokenString string) (int, error)
 	Expiration() time.Duration
+}
+
+type jwt struct {
+	clock         clock.Clock
+	signingMethod jwtgo.SigningMethod
+	key           []byte
+	expiration    time.Duration
+}
+
+func NewJWT(c clock.Clock, key string, expiration int) jwt {
+	return jwt{
+		clock:         c,
+		signingMethod: jwtgo.SigningMethodHS256,
+		key:           []byte(key),
+		expiration:    time.Duration(expiration) * time.Minute,
+	}
+}
+
+func (j jwt) NewToken(userId int) (string, error) {
+	now := j.clock.Now()
+	claims := jwtgo.StandardClaims{
+		Subject:   strconv.Itoa(userId),
+		IssuedAt:  now.Unix(),
+		ExpiresAt: now.Add(j.expiration).Unix(),
+	}
+
+	token := jwtgo.NewWithClaims(j.signingMethod, claims)
+	tokenString, err := token.SignedString(j.key)
+	if err != nil {
+		return "", err
+	}
+	return tokenString, nil
+}
+
+func (j jwt) DecodeToken(tokenString string) (int, error) {
+	claims := &jwtgo.StandardClaims{}
+
+	token, err := jwtgo.ParseWithClaims(tokenString, claims, func(token *jwtgo.Token) (interface{}, error) {
+		// alg none 攻撃対策
+		if token.Method == jwtgo.SigningMethodNone {
+			return nil, fmt.Errorf("jwt signing method is not specified")
+		}
+		if token.Method != j.signingMethod {
+			return nil, fmt.Errorf("jwt signing method is invalid")
+		}
+		return j.key, nil
+	})
+	if err != nil {
+		return 0, errJWTInvalid
+	}
+	if !token.Valid {
+		return 0, errJWTInvalid
+	}
+
+	// "sub" (Subject)
+	sub, err := strconv.Atoi(claims.Subject)
+	if err != nil {
+		return 0, errJWTInvalid
+	}
+
+	// "iat" (Issued At)
+	iat := time.Unix(claims.IssuedAt, 0)
+	exp := iat.Add(j.expiration)
+	if j.clock.Now().After(exp) {
+		return 0, errJWTExpired
+	}
+
+	// "exp" (Expiration Time)
+	// jwt-goが内部的にexpをチェックしているが、二重でチェックする
+	exp = time.Unix(claims.ExpiresAt, 0)
+	if j.clock.Now().After(exp) {
+		return 0, errJWTExpired
+	}
+
+	return sub, nil
+}
+
+func (j jwt) Expiration() time.Duration {
+	return j.expiration
 }
 
 // Cookie

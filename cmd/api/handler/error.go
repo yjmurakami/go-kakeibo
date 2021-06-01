@@ -1,6 +1,14 @@
 package handler
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
+
+var (
+	errJWTInvalid = errors.New("jwt is invalid")
+	errJWTExpired = errors.New("jwt is expired")
+)
 
 type clientError struct {
 	status int
