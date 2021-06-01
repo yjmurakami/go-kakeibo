@@ -6,10 +6,11 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/yjmurakami/go-kakeibo/cmd/api/handler"
 	"github.com/yjmurakami/go-kakeibo/internal/clock"
+	"github.com/yjmurakami/go-kakeibo/internal/repository"
 )
 
 type handlerConfig struct {
-	timer     clock.Clock
+	clock     clock.Clock
 	db        *sql.DB
 	validator *validator.Validate
 	jwt       handler.Jwt
@@ -17,10 +18,14 @@ type handlerConfig struct {
 	container container
 }
 
-type container struct{}
+type container struct {
+	userRepository repository.UserRepository
+}
 
 func newContainer() container {
-	c := container{}
+	c := container{
+		userRepository: repository.NewUserRepository(),
+	}
 
 	return c
 }

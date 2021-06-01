@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/yjmurakami/go-kakeibo/cmd/api/handler"
+	"github.com/yjmurakami/go-kakeibo/cmd/api/service"
 	"github.com/yjmurakami/go-kakeibo/internal/clock"
 	"github.com/yjmurakami/go-kakeibo/internal/database"
 )
@@ -28,7 +29,7 @@ func Start() error {
 	jwt := handler.NewJWT(timer, cnf.Api.JwtKey, cnf.Api.JwtExpiration)
 
 	hc := handlerConfig{
-		timer:     timer,
+		clock:     timer,
 		db:        db,
 		validator: handler.NewValidator(),
 		jwt:       jwt,
@@ -36,7 +37,14 @@ func Start() error {
 		container: newContainer(),
 	}
 
-	mdl := handler.NewMiddlewareHandler()
+	mdl := handler.NewMiddlewareHandler(
+		service.NewMiddlewareService(
+			hc.db,
+			hc.container.userRepository,
+		),
+		hc.jwt,
+		hc.clock,
+	)
 	mux := newRouter(mdl, hc)
 	mux = mdl.RecoverPanic(mux)
 
