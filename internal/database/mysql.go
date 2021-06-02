@@ -20,31 +20,31 @@ type MySQLConfig struct {
 
 func ValidateMySQLConfig(cnf MySQLConfig) error {
 	if cnf.Host == "" {
-		return fmt.Errorf("mysql.host is not specified")
+		return fmt.Errorf("mysql.host is invalid")
 	}
 
 	if cnf.Port == "" {
-		return fmt.Errorf("mysql.port is not specified")
+		return fmt.Errorf("mysql.port is invalid")
 	}
 
 	if cnf.Username == "" {
-		return fmt.Errorf("mysql.username is not specified")
+		return fmt.Errorf("mysql.username is invalid")
 	}
 
 	if cnf.Password == "" {
-		return fmt.Errorf("mysql.password is not specified")
+		return fmt.Errorf("mysql.password is invalid")
 	}
 
 	if cnf.MaxOpenConns == 0 {
-		return fmt.Errorf("mysql.maxOpenConns is not specified")
+		return fmt.Errorf("mysql.maxOpenConns is invalid")
 	}
 
 	if cnf.MaxIdleConns == 0 {
-		return fmt.Errorf("mysql.maxIdleConns is not specified")
+		return fmt.Errorf("mysql.maxIdleConns is invalid")
 	}
 
 	if cnf.MaxLifetime == 0 {
-		return fmt.Errorf("mysql.maxLifetime is not specified")
+		return fmt.Errorf("mysql.maxLifetime is invalid")
 	}
 
 	return nil

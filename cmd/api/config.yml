@@ -1,8 +1,8 @@
 api:
   port: 8080
   idleTimeout: 60 #秒単位
-  readTimeout: 5 #秒単位
-  writeTimeout: 10 #秒単位
+  readTimeout: 10 #秒単位
+  writeTimeout: 30 #秒単位
   jwtKey: secret
   jwtExpiration: 5 #分単位
 

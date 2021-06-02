@@ -40,26 +40,27 @@ func readConfig(filepath string) (*config, error) {
 	}
 
 	if cnf.Api.Port == "" {
-		return nil, fmt.Errorf("%w : api.port is not specified", ErrInvalidConfig)
+		return nil, fmt.Errorf("%w : api.port is invalid", ErrInvalidConfig)
 	}
 
 	if cnf.Api.IdleTimeout == 0 {
-		return nil, fmt.Errorf("%w : api.idleTimeout is not specified", ErrInvalidConfig)
+		return nil, fmt.Errorf("%w : api.idleTimeout is invalid", ErrInvalidConfig)
 	}
 
 	if cnf.Api.ReadTimeout == 0 {
-		return nil, fmt.Errorf("%w : api.readTimeout is not specified", ErrInvalidConfig)
+		return nil, fmt.Errorf("%w : api.readTimeout is invalid", ErrInvalidConfig)
 	}
 
 	if cnf.Api.WriteTimeout == 0 {
-		return nil, fmt.Errorf("%w : api.writeTimeout is not specified", ErrInvalidConfig)
+		return nil, fmt.Errorf("%w : api.writeTimeout is invalid", ErrInvalidConfig)
 	}
 
 	if cnf.Api.JwtKey == "" {
-		return nil, fmt.Errorf("%w : api.jwtKey is not specified", ErrInvalidConfig)
+		return nil, fmt.Errorf("%w : api.jwtKey is invalid", ErrInvalidConfig)
 	}
+
 	if cnf.Api.JwtExpiration == 0 {
-		return nil, fmt.Errorf("%w : api.jwtExpiration is not specified", ErrInvalidConfig)
+		return nil, fmt.Errorf("%w : api.jwtExpiration is invalid", ErrInvalidConfig)
 	}
 
 	err = database.ValidateMySQLConfig(cnf.MySQL)
