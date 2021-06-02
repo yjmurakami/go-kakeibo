@@ -32,10 +32,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/V1HealthRes"
-  /v1/incomes:
+  /v1/transactions:
     get:
       tags:
-        - "Income"
+        - "Transaction"
       parameters:
         - $ref: "#/components/parameters/Limit"
         - $ref: "#/components/parameters/Sort"
@@ -50,16 +50,16 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/V1IncomesRes"
+                      $ref: "#/components/schemas/V1TransactionsRes"
     post:
       tags:
-        - "Income"
+        - "Transaction"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/V1IncomesPostReq"
+              $ref: "#/components/schemas/V1TransactionsPostReq"
       responses:
         "200":
           description: ""
@@ -69,13 +69,13 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: "#/components/schemas/V1IncomesRes"
-  /v1/incomes/{incomeId}:
+                    $ref: "#/components/schemas/V1TransactionsRes"
+  /v1/transactions/{transactionId}:
     parameters:
-      - $ref: "#/components/parameters/IncomeId"
+      - $ref: "#/components/parameters/TransactionId"
     get:
       tags:
-        - "Income"
+        - "Transaction"
       responses:
         "200":
           description: ""
@@ -85,16 +85,16 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: "#/components/schemas/V1IncomesRes"
+                    $ref: "#/components/schemas/V1TransactionsRes"
     put:
       tags:
-        - "Income"
+        - "Transaction"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/V1IncomesIncomeIdPutReq"
+              $ref: "#/components/schemas/V1TransactionsTransactionIdPutReq"
       responses:
         "200":
           description: ""
@@ -104,10 +104,10 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: "#/components/schemas/V1IncomesRes"
+                    $ref: "#/components/schemas/V1TransactionsRes"
     delete:
       tags:
-        - "Income"
+        - "Transaction"
       responses:
         "200":
           description: ""
@@ -123,8 +123,8 @@ components:
       in: query
       schema:
         type: string
-    IncomeId:
-      name: incomeId
+    TransactionId:
+      name: transactionId
       in: path
       required: true
       schema:
@@ -144,16 +144,26 @@ components:
           type: string
         version:
           type: string
-    V1IncomesPostReq:
+    V1TransactionsPostReq:
       type: object
       required:
         - "date"
+        - "type"
         - "categoryId"
         - "amount"
       properties:
         date:
           type: string
           format: date
+        type:
+          type: integer
+          enum:
+            - 0
+            - 1
+          description: >
+            Transaction type:
+              * 0 - income
+              * 1 - expense
         categoryId:
           type: integer
         amount:
@@ -163,16 +173,26 @@ components:
         note:
           type: string
           maxLength: 1000
-    V1IncomesIncomeIdPutReq:
+    V1TransactionsTransactionIdPutReq:
       type: object
       required:
         - "date"
+        - "type"
         - "categoryId"
         - "amount"
       properties:
         date:
           type: string
           format: date
+        type:
+          type: integer
+          enum:
+            - 0
+            - 1
+          description: >
+            Transaction type:
+              * 0 - income
+              * 1 - expense
         categoryId:
           type: integer
         amount:
@@ -182,7 +202,7 @@ components:
         note:
           type: string
           maxLength: 1000
-    V1IncomesRes:
+    V1TransactionsRes:
       type: object
       properties:
         id:
@@ -190,6 +210,15 @@ components:
         date:
           type: string
           format: date
+        type:
+          type: integer
+          enum:
+            - 0
+            - 1
+          description: >
+            Transaction type:
+              * 0 - income
+              * 1 - expense
         categoryId:
           type: integer
         amount:

@@ -10,22 +10,22 @@ import (
 	"github.com/yjmurakami/go-kakeibo/cmd/api/handler"
 )
 
-func newRouter(m handler.MiddlewareHandler, hc handlerConfig) http.Handler {
+func newRouter(m handler.MiddlewareHandler, hc handlerConfig) http.Handler { 
 	CategoryHandler := initCategoryHandler(hc)
-	IncomeHandler := initIncomeHandler(hc)
 	SystemHandler := initSystemHandler(hc)
+	TransactionHandler := initTransactionHandler(hc)
 
 	mux := mux.NewRouter()
 
 	mux.HandleFunc("/api/v1/categories", m.HandleError(CategoryHandler.V1CategoriesGet())).Methods("GET")
 
-	mux.HandleFunc("/api/v1/incomes", m.HandleError(IncomeHandler.V1IncomesGet())).Methods("GET")
-	mux.HandleFunc("/api/v1/incomes/{incomeId}", m.HandleError(IncomeHandler.V1IncomesIncomeIdDelete())).Methods("DELETE")
-	mux.HandleFunc("/api/v1/incomes/{incomeId}", m.HandleError(IncomeHandler.V1IncomesIncomeIdGet())).Methods("GET")
-	mux.HandleFunc("/api/v1/incomes/{incomeId}", m.HandleError(IncomeHandler.V1IncomesIncomeIdPut())).Methods("PUT")
-	mux.HandleFunc("/api/v1/incomes", m.HandleError(IncomeHandler.V1IncomesPost())).Methods("POST")
-
 	mux.HandleFunc("/api/v1/health", m.HandleError(SystemHandler.V1HealthGet())).Methods("GET")
+
+	mux.HandleFunc("/api/v1/transactions", m.HandleError(TransactionHandler.V1TransactionsGet())).Methods("GET")
+	mux.HandleFunc("/api/v1/transactions", m.HandleError(TransactionHandler.V1TransactionsPost())).Methods("POST")
+	mux.HandleFunc("/api/v1/transactions/{transactionId}", m.HandleError(TransactionHandler.V1TransactionsTransactionIdDelete())).Methods("DELETE")
+	mux.HandleFunc("/api/v1/transactions/{transactionId}", m.HandleError(TransactionHandler.V1TransactionsTransactionIdGet())).Methods("GET")
+	mux.HandleFunc("/api/v1/transactions/{transactionId}", m.HandleError(TransactionHandler.V1TransactionsTransactionIdPut())).Methods("PUT")
 
 	return mux
 }

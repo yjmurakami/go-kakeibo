@@ -6,8 +6,8 @@ import (
 	"time"
 )
 
-// Generated from 'kakeibo.expenses'.
-type Expense struct {
+// Generated from 'kakeibo.transactions'.
+type Transaction struct {
 	ID         int       // id
 	UserID     int       // user_id
 	Date       time.Time // date

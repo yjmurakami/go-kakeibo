@@ -7,17 +7,17 @@ import (
 	"github.com/yjmurakami/go-kakeibo/internal/entity"
 )
 
-// Generated from 'kakeibo.incomes'.
-type incomeRepository struct{}
+// Generated from 'kakeibo.transactions'.
+type transactionRepository struct{}
 
-func NewIncomeRepository() *incomeRepository {
-	return &incomeRepository{}
+func NewTransactionRepository() *transactionRepository {
+	return &transactionRepository{}
 }
 
-func (r *incomeRepository) SelectAll(db database.DB) ([]*entity.Income, error) {
+func (r *transactionRepository) SelectAll(db database.DB) ([]*entity.Transaction, error) {
 	query := `
 		SELECT id, user_id, date, category_id, amount, comment, created_at, modified_at
-		FROM kakeibo.incomes
+		FROM kakeibo.transactions
 		ORDER BY id
 	`
 
@@ -27,9 +27,9 @@ func (r *incomeRepository) SelectAll(db database.DB) ([]*entity.Income, error) {
 	}
 	defer rows.Close()
 
-	s := []*entity.Income{}
+	s := []*entity.Transaction{}
 	for rows.Next() {
-		e := entity.Income{}
+		e := entity.Transaction{}
 		err = rows.Scan(&e.ID, &e.UserID, &e.Date, &e.CategoryID, &e.Amount, &e.Comment, &e.CreatedAt, &e.ModifiedAt)
 		if err != nil {
 			return nil, err
@@ -44,9 +44,9 @@ func (r *incomeRepository) SelectAll(db database.DB) ([]*entity.Income, error) {
 	return s, nil
 }
 
-func (r *incomeRepository) Insert(db database.DB, e *entity.Income) error {
+func (r *transactionRepository) Insert(db database.DB, e *entity.Transaction) error {
 	query := `
-		INSERT INTO kakeibo.incomes (
+		INSERT INTO kakeibo.transactions (
 			user_id, date, category_id, amount, comment, created_at, modified_at
 		) VALUES (
 			?, ?, ?, ?, ?, ?, ?
@@ -67,9 +67,9 @@ func (r *incomeRepository) Insert(db database.DB, e *entity.Income) error {
 	return nil
 }
 
-func (r *incomeRepository) Update(db database.DB, e *entity.Income) error {
+func (r *transactionRepository) Update(db database.DB, e *entity.Transaction) error {
 	query := `
-		UPDATE kakeibo.incomes SET
+		UPDATE kakeibo.transactions SET
 			user_id = ?, date = ?, category_id = ?, amount = ?, comment = ?, created_at = ?, modified_at = ?
 		WHERE id = ?
 	`
@@ -78,9 +78,9 @@ func (r *incomeRepository) Update(db database.DB, e *entity.Income) error {
 	return err
 }
 
-func (r *incomeRepository) Delete(db database.DB, e *entity.Income) error {
+func (r *transactionRepository) Delete(db database.DB, e *entity.Transaction) error {
 	query := `
-		DELETE FROM kakeibo.incomes
+		DELETE FROM kakeibo.transactions
 		WHERE id = ?
 	`
 
@@ -89,10 +89,10 @@ func (r *incomeRepository) Delete(db database.DB, e *entity.Income) error {
 }
 
 // Generated from index 'category_id'.
-func (r *incomeRepository) SelectByCategoryID(db database.DB, categoryID int) ([]*entity.Income, error) {
+func (r *transactionRepository) SelectByCategoryID(db database.DB, categoryID int) ([]*entity.Transaction, error) {
 	query := `
 		SELECT id, user_id, date, category_id, amount, comment, created_at, modified_at
-		FROM kakeibo.incomes
+		FROM kakeibo.transactions
 		WHERE category_id = ?
 		ORDER BY id
 	`
@@ -102,9 +102,9 @@ func (r *incomeRepository) SelectByCategoryID(db database.DB, categoryID int) ([
 	}
 	defer rows.Close()
 
-	s := []*entity.Income{}
+	s := []*entity.Transaction{}
 	for rows.Next() {
-		e := entity.Income{}
+		e := entity.Transaction{}
 		err = rows.Scan(&e.ID, &e.UserID, &e.Date, &e.CategoryID, &e.Amount, &e.Comment, &e.CreatedAt, &e.ModifiedAt)
 		if err != nil {
 			return nil, err
@@ -119,14 +119,14 @@ func (r *incomeRepository) SelectByCategoryID(db database.DB, categoryID int) ([
 	return s, nil
 }
 
-// Generated from index 'incomes_id_pkey'.
-func (r *incomeRepository) SelectByID(db database.DB, id int) (*entity.Income, error) {
+// Generated from index 'transactions_id_pkey'.
+func (r *transactionRepository) SelectByID(db database.DB, id int) (*entity.Transaction, error) {
 	query := `
 		SELECT id, user_id, date, category_id, amount, comment, created_at, modified_at
-		FROM kakeibo.incomes
+		FROM kakeibo.transactions
 		WHERE id = ?
 	`
-	e := entity.Income{}
+	e := entity.Transaction{}
 	err := db.QueryRow(query, id).Scan(&e.ID, &e.UserID, &e.Date, &e.CategoryID, &e.Amount, &e.Comment, &e.CreatedAt, &e.ModifiedAt)
 	if err != nil {
 		return nil, err
@@ -135,10 +135,10 @@ func (r *incomeRepository) SelectByID(db database.DB, id int) (*entity.Income, e
 }
 
 // Generated from index 'user_id'.
-func (r *incomeRepository) SelectByUserID(db database.DB, userID int) ([]*entity.Income, error) {
+func (r *transactionRepository) SelectByUserID(db database.DB, userID int) ([]*entity.Transaction, error) {
 	query := `
 		SELECT id, user_id, date, category_id, amount, comment, created_at, modified_at
-		FROM kakeibo.incomes
+		FROM kakeibo.transactions
 		WHERE user_id = ?
 		ORDER BY id
 	`
@@ -148,9 +148,9 @@ func (r *incomeRepository) SelectByUserID(db database.DB, userID int) ([]*entity
 	}
 	defer rows.Close()
 
-	s := []*entity.Income{}
+	s := []*entity.Transaction{}
 	for rows.Next() {
-		e := entity.Income{}
+		e := entity.Transaction{}
 		err = rows.Scan(&e.ID, &e.UserID, &e.Date, &e.CategoryID, &e.Amount, &e.Comment, &e.CreatedAt, &e.ModifiedAt)
 		if err != nil {
 			return nil, err

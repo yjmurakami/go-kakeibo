@@ -11,13 +11,13 @@ SelectSample
 -- SQL
 SELECT
   u.id
-  , u.user_name
+  , u.login_id
 FROM
   kakeibo.users AS u 
-  INNER JOIN kakeibo.incomes AS i
-    ON  u.id = i.user_id
+  INNER JOIN kakeibo.transactions AS t
+    ON  u.id = t.user_id
 WHERE
-  u.user_id = %%userId int%%
-  AND i.category_id = %%categoryId int%%
+  u.login_id = %%loginId int%%
+  AND t.category_id = %%categoryId int%%
 ORDER BY
   u.id

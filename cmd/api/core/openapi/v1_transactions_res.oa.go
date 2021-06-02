@@ -3,8 +3,10 @@
 
 package openapi
 
-type V1IncomesIncomeIdPutReq struct {
+type V1TransactionsRes struct {
+	Id         int    `json:"id"`
 	Date       string `json:"date"`
+	Type       int    `json:"type"` // Transaction type:   * 0 - income   * 1 - expense
 	CategoryId int    `json:"categoryId"`
 	Amount     int    `json:"amount"`
 	Note       string `json:"note"`

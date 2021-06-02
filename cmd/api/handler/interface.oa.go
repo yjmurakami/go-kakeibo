@@ -5,18 +5,18 @@ package handler
 
 import "net/http"
 
-type CategoryHandler interface {
+type CategoryHandler interface { 
 	V1CategoriesGet() func(w http.ResponseWriter, r *http.Request) error
 }
 
-type IncomeHandler interface {
-	V1IncomesGet() func(w http.ResponseWriter, r *http.Request) error
-	V1IncomesIncomeIdDelete() func(w http.ResponseWriter, r *http.Request) error
-	V1IncomesIncomeIdGet() func(w http.ResponseWriter, r *http.Request) error
-	V1IncomesIncomeIdPut() func(w http.ResponseWriter, r *http.Request) error
-	V1IncomesPost() func(w http.ResponseWriter, r *http.Request) error
+type SystemHandler interface { 
+	V1HealthGet() func(w http.ResponseWriter, r *http.Request) error
 }
 
-type SystemHandler interface {
-	V1HealthGet() func(w http.ResponseWriter, r *http.Request) error
+type TransactionHandler interface { 
+	V1TransactionsGet() func(w http.ResponseWriter, r *http.Request) error
+	V1TransactionsPost() func(w http.ResponseWriter, r *http.Request) error
+	V1TransactionsTransactionIdDelete() func(w http.ResponseWriter, r *http.Request) error
+	V1TransactionsTransactionIdGet() func(w http.ResponseWriter, r *http.Request) error
+	V1TransactionsTransactionIdPut() func(w http.ResponseWriter, r *http.Request) error
 }

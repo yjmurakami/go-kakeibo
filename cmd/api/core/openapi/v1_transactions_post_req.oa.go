@@ -3,8 +3,9 @@
 
 package openapi
 
-type V1IncomesPostReq struct {
+type V1TransactionsPostReq struct {
 	Date       string `json:"date"`
+	Type       int    `json:"type"` // Transaction type:   * 0 - income   * 1 - expense
 	CategoryId int    `json:"categoryId"`
 	Amount     int    `json:"amount"`
 	Note       string `json:"note"`
