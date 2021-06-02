@@ -31,10 +31,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  data:
-                    type: string
+                $ref: "#/components/schemas/V1HealthRes"
   /v1/incomes:
     get:
       tags:
@@ -139,6 +136,13 @@ components:
         id:
           type: integer
         name:
+          type: string
+    V1HealthRes:
+      type: object
+      properties:
+        status:
+          type: string
+        version:
           type: string
     V1IncomesPostReq:
       type: object
