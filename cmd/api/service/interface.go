@@ -9,3 +9,7 @@ import (
 type MiddlewareService interface {
 	Authenticate(ctx context.Context, userID int) (*entity.User, error)
 }
+
+type SystemService interface {
+	V1HealthGet(ctx context.Context) error
+}

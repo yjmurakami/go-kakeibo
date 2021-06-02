@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/yjmurakami/go-kakeibo/cmd/api/handler"
+	"github.com/yjmurakami/go-kakeibo/cmd/api/service"
 	"github.com/yjmurakami/go-kakeibo/internal/clock"
 	"github.com/yjmurakami/go-kakeibo/internal/repository"
 )
@@ -39,5 +40,9 @@ func initCategoryHandler(hc handlerConfig) handler.CategoryHandler {
 }
 
 func initSystemHandler(hc handlerConfig) handler.SystemHandler {
-	return nil
+	return handler.NewSystemHandler(
+		service.NewSystemService(
+			hc.db,
+		),
+	)
 }
