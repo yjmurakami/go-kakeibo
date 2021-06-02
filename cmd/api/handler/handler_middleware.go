@@ -53,7 +53,7 @@ func (m *middlewareHandler) Authenticate(next http.Handler) http.HandlerFunc {
 			return
 		}
 
-		user, err := m.service.Authenticate(userId)
+		user, err := m.service.Authenticate(r.Context(), userId)
 		if err != nil {
 			if errors.Is(err, core.ErrAuthenticationFailed) {
 				m.handleClientError(w, newUnauthorizedError())

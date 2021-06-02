@@ -1,7 +1,11 @@
 package service
 
-import "github.com/yjmurakami/go-kakeibo/internal/entity"
+import (
+	"context"
+
+	"github.com/yjmurakami/go-kakeibo/internal/entity"
+)
 
 type MiddlewareService interface {
-	Authenticate(userID int) (*entity.User, error)
+	Authenticate(ctx context.Context, userID int) (*entity.User, error)
 }

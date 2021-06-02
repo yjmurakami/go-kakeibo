@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 
@@ -21,7 +22,7 @@ func NewMiddlewareService(db *sql.DB, uRepo repository.UserRepository) *middlewa
 	}
 }
 
-func (m *middlewareService) Authenticate(userID int) (*entity.User, error) {
+func (m *middlewareService) Authenticate(ctx context.Context, userID int) (*entity.User, error) {
 	u, err := m.userRepository.SelectByID(m.db, userID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
