@@ -215,7 +215,7 @@ func decodeJSON(w http.ResponseWriter, r *http.Request, dst interface{}) error {
 }
 
 func encodeJSON(w http.ResponseWriter, status int, src interface{}, header http.Header) error {
-	js, err := json.Marshal(src)
+	js, err := json.MarshalIndent(src, "", "\t")
 	if err != nil {
 		return err
 	}
