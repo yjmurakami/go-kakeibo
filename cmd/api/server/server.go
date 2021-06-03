@@ -27,11 +27,12 @@ func Start() error {
 
 	timer := clock.SystemClock{}
 	jwt := handler.NewJWT(timer, cnf.Api.JwtKey, cnf.Api.JwtExpiration)
+	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 
 	hc := handlerConfig{
+		logger:    logger,
 		clock:     timer,
 		db:        db,
-		validator: handler.NewValidator(),
 		jwt:       jwt,
 		config:    cnf,
 		container: newContainer(),

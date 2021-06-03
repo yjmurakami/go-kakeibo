@@ -2,8 +2,8 @@ package server
 
 import (
 	"database/sql"
+	"log"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/yjmurakami/go-kakeibo/cmd/api/handler"
 	"github.com/yjmurakami/go-kakeibo/cmd/api/service"
 	"github.com/yjmurakami/go-kakeibo/internal/clock"
@@ -11,9 +11,9 @@ import (
 )
 
 type handlerConfig struct {
+	logger    *log.Logger
 	clock     clock.Clock
 	db        *sql.DB
-	validator *validator.Validate
 	jwt       handler.Jwt
 	config    *config
 	container container
@@ -31,7 +31,7 @@ func newContainer() container {
 	return c
 }
 
-func initIncomeHandler(hc handlerConfig) handler.IncomeHandler {
+func initTransactionHandler(hc handlerConfig) handler.TransactionHandler {
 	return nil
 }
 

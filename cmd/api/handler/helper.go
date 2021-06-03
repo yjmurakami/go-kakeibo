@@ -6,13 +6,11 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"reflect"
 	"strconv"
 	"strings"
 	"time"
 
 	jwtgo "github.com/dgrijalva/jwt-go"
-	"github.com/go-playground/validator/v10"
 	"github.com/yjmurakami/go-kakeibo/internal/clock"
 )
 
@@ -125,23 +123,6 @@ func newExpiredCookie(name string) *http.Cookie {
 	c := newCookie(name, "", time.Unix(0, 0))
 	c.MaxAge = -1
 	return c
-}
-
-// Validator
-
-func NewValidator() *validator.Validate {
-	validate := validator.New()
-
-	// FieldError.Field() で取得する文字列をStructのフィールド名からJSONタグに変更
-	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
-		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
-		if name == "-" {
-			return ""
-		}
-		return name
-	})
-
-	return validate
 }
 
 // JSON
