@@ -148,67 +148,54 @@ func NewValidator() *validator.Validate {
 
 // 参考情報 https://www.alexedwards.net/blog/how-to-properly-parse-a-json-request-body
 func decodeJSON(w http.ResponseWriter, r *http.Request, dst interface{}) error {
-
-	// TODO リクエスト最大サイズの設定
+	maxBytes := 1_048_576
+	r.Body = http.MaxBytesReader(w, r.Body, int64(maxBytes))
 
 	dec := json.NewDecoder(r.Body)
 	dec.DisallowUnknownFields()
 
-	err := dec.Decode(&dst)
+	err := dec.Decode(dst)
 	if err != nil {
-		syntaxError := &json.SyntaxError{}
-		unmarshalTypeError := &json.UnmarshalTypeError{}
+		var syntaxError *json.SyntaxError
+		var unmarshalTypeError *json.UnmarshalTypeError
+		var invalidUnmarshalError *json.InvalidUnmarshalError
 
 		switch {
 		case errors.As(err, &syntaxError):
-			return clientError{
-				status: http.StatusBadRequest,
-				body:   fmt.Sprintf("request body contains invalid JSON (at position %d)", syntaxError.Offset),
-			}
+			return fmt.Errorf("body contains invalid JSON (at character %d)", syntaxError.Offset)
 
 		case errors.Is(err, io.ErrUnexpectedEOF):
-			return clientError{
-				status: http.StatusBadRequest,
-				body:   "request body contains invalid JSON",
-			}
+			return fmt.Errorf("body contains invalid JSON")
 
 		case errors.As(err, &unmarshalTypeError):
-			return clientError{
-				status: http.StatusBadRequest,
-				body:   fmt.Sprintf("request body contains an invalid value for the %q field (at position %d)", unmarshalTypeError.Field, unmarshalTypeError.Offset),
+			if unmarshalTypeError.Field != "" {
+				return fmt.Errorf("body contains invalid JSON type for field %q", unmarshalTypeError.Field)
 			}
+			return fmt.Errorf("body contains invalid JSON type (at character %d)", unmarshalTypeError.Offset)
+
+		case errors.Is(err, io.EOF):
+			return fmt.Errorf("body must not be empty")
 
 		case strings.HasPrefix(err.Error(), "json: unknown field "):
 			field := strings.TrimPrefix(err.Error(), "json: unknown field ")
-			return clientError{
-				status: http.StatusBadRequest,
-				body:   fmt.Sprintf("request body contains unknown field %s", field),
-			}
-
-		case errors.Is(err, io.EOF):
-			return clientError{
-				status: http.StatusBadRequest,
-				body:   "request body is empty",
-			}
+			return fmt.Errorf("body contains unknown key %s", field)
 
 		case err.Error() == "http: request body too large":
-			return clientError{
-				status: http.StatusBadRequest,
-				body:   "request body is too large",
-			}
+			return fmt.Errorf("body must not be larger than %d bytes", maxBytes)
+
+		case errors.As(err, &invalidUnmarshalError):
+			// dstがポインターではない場合、invalidUnmarshalError が発生する
+			// プログラムに問題があるため、panicする
+			panic(err)
 
 		default:
-			// Server Error - json.InvalidUnmarshalError
 			return err
 		}
 	}
 
 	err = dec.Decode(&struct{}{})
 	if err != io.EOF {
-		return clientError{
-			status: http.StatusBadRequest,
-			body:   "request body contains more than one JSON object",
-		}
+		return fmt.Errorf("body must only contain a single JSON value")
 	}
 
 	return nil
