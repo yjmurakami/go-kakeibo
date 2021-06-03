@@ -35,12 +35,12 @@ func unauthorizedError(w http.ResponseWriter, r *http.Request) {
 	clientError(w, r, status, http.StatusText(status))
 }
 
-func notFoundError(w http.ResponseWriter, r *http.Request) {
+func NotFoundError(w http.ResponseWriter, r *http.Request) {
 	status := http.StatusNotFound
 	clientError(w, r, status, http.StatusText(status))
 }
 
-func methodNotAllowedError(w http.ResponseWriter, r *http.Request) {
+func MethodNotAllowedError(w http.ResponseWriter, r *http.Request) {
 	status := http.StatusMethodNotAllowed
 	clientError(w, r, status, http.StatusText(status))
 }

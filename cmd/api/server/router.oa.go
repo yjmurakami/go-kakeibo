@@ -16,6 +16,8 @@ func newRouter(m handler.MiddlewareHandler, hc handlerConfig) http.Handler {
 	TransactionHandler := initTransactionHandler(hc)
 
 	mux := mux.NewRouter()
+	mux.NotFoundHandler = http.HandlerFunc(handler.NotFoundError)
+	mux.MethodNotAllowedHandler = http.HandlerFunc(handler.MethodNotAllowedError)
 
 	mux.HandleFunc("/api/v1/categories", CategoryHandler.V1CategoriesGet()).Methods("GET")
 

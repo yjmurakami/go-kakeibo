@@ -11,7 +11,9 @@ import (
 func newRouter(m handler.MiddlewareHandler, hc handlerConfig) http.Handler { {{#apiInfo}}{{#apis}}
 	{{classname}}Handler := init{{classname}}Handler(hc){{/apis}}{{/apiInfo}}
 
-	mux := mux.NewRouter(){{#apiInfo}}{{#apis}}
+	mux := mux.NewRouter()
+	mux.NotFoundHandler = http.HandlerFunc(handler.NotFoundError)
+	mux.MethodNotAllowedHandler = http.HandlerFunc(handler.MethodNotAllowedError){{#apiInfo}}{{#apis}}
 {{#operations}}{{#operation}}
 	mux.HandleFunc("/api{{path}}", {{#vendorExtensions.x-go-middleware}}m.{{{.}}}({{/vendorExtensions.x-go-middleware}}{{classname}}Handler.{{operationId}}(){{#vendorExtensions.x-go-middleware}}){{/vendorExtensions.x-go-middleware}}).Methods("{{#lambda.uppercase}}{{httpMethod}}{{/lambda.uppercase}}"){{/operation}}{{/operations}}{{/apis}}{{/apiInfo}}
 
