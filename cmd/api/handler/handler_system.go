@@ -17,19 +17,24 @@ func NewSystemHandler(s service.SystemService) *systemHandler {
 	}
 }
 
-func (h *systemHandler) V1HealthGet() func(w http.ResponseWriter, r *http.Request) error {
+func (h *systemHandler) V1HealthGet() http.HandlerFunc {
 	type response struct {
 		Data *openapi.V1HealthRes `json:"data"`
 	}
-	return func(w http.ResponseWriter, r *http.Request) error {
+	return func(w http.ResponseWriter, r *http.Request) {
 		oaRes, err := h.service.V1HealthGet(r.Context())
 		if err != nil {
-			return err
+			serverError(w, r, err)
+			return
 		}
 
-		err = encodeJSON(w, response{
+		res := response{
 			Data: oaRes,
-		})
-		return err
+		}
+		err = encodeJSON(w, http.StatusOK, res, nil)
+		if err != nil {
+			serverError(w, r, err)
+			return
+		}
 	}
 }

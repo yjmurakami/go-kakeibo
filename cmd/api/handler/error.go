@@ -2,7 +2,8 @@ package handler
 
 import (
 	"errors"
-	"fmt"
+	"log"
+	"net/http"
 )
 
 var (
@@ -10,21 +11,42 @@ var (
 	errJWTExpired = errors.New("jwt is expired")
 )
 
-type clientError struct {
-	status int
-	body   string
+// TODO
+func logError(r *http.Request, err error) {
+	log.Println(err)
 }
 
-func (e clientError) Error() string {
-	return fmt.Sprintf("status : %v, body : %v", e.status, e.body)
+func clientError(w http.ResponseWriter, r *http.Request, status int, message interface{}) {
+
+	// TODO OpenAPI定義
+	errContainer := map[string]interface{}{
+		"error": message,
+	}
+
+	err := encodeJSON(w, status, errContainer, nil)
+	if err != nil {
+		logError(r, err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }
 
-func newBadRequestError(id string, msg string) clientError {
-	// TODO
-	return clientError{}
+func unauthorizedError(w http.ResponseWriter, r *http.Request) {
+	status := http.StatusUnauthorized
+	clientError(w, r, status, http.StatusText(status))
 }
 
-func newUnauthorizedError() clientError {
-	// TODO
-	return clientError{}
+func notFoundError(w http.ResponseWriter, r *http.Request) {
+	status := http.StatusNotFound
+	clientError(w, r, status, http.StatusText(status))
+}
+
+func methodNotAllowedError(w http.ResponseWriter, r *http.Request) {
+	status := http.StatusMethodNotAllowed
+	clientError(w, r, status, http.StatusText(status))
+}
+
+func serverError(w http.ResponseWriter, r *http.Request, err error) {
+	logError(r, err)
+	status := http.StatusInternalServerError
+	clientError(w, r, status, http.StatusText(status))
 }

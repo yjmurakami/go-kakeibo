@@ -13,7 +13,7 @@ func newRouter(m handler.MiddlewareHandler, hc handlerConfig) http.Handler { {{#
 
 	mux := mux.NewRouter(){{#apiInfo}}{{#apis}}
 {{#operations}}{{#operation}}
-	mux.HandleFunc("/api{{path}}", {{#vendorExtensions.x-go-middleware}}m.{{{.}}}({{/vendorExtensions.x-go-middleware}}m.HandleError({{classname}}Handler.{{operationId}}()){{#vendorExtensions.x-go-middleware}}){{/vendorExtensions.x-go-middleware}}).Methods("{{#lambda.uppercase}}{{httpMethod}}{{/lambda.uppercase}}"){{/operation}}{{/operations}}{{/apis}}{{/apiInfo}}
+	mux.HandleFunc("/api{{path}}", {{#vendorExtensions.x-go-middleware}}m.{{{.}}}({{/vendorExtensions.x-go-middleware}}{{classname}}Handler.{{operationId}}(){{#vendorExtensions.x-go-middleware}}){{/vendorExtensions.x-go-middleware}}).Methods("{{#lambda.uppercase}}{{httpMethod}}{{/lambda.uppercase}}"){{/operation}}{{/operations}}{{/apis}}{{/apiInfo}}
 
 	return mux
 }
