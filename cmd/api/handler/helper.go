@@ -214,8 +214,21 @@ func decodeJSON(w http.ResponseWriter, r *http.Request, dst interface{}) error {
 	return nil
 }
 
-func encodeJSON(w http.ResponseWriter, src interface{}) error {
-	enc := json.NewEncoder(w)
-	enc.SetIndent("", "\t")
-	return enc.Encode(src)
+func encodeJSON(w http.ResponseWriter, status int, src interface{}, header http.Header) error {
+	js, err := json.Marshal(src)
+	if err != nil {
+		return err
+	}
+
+	js = append(js, '\n')
+
+	for k, v := range header {
+		w.Header()[k] = v
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	_, err = w.Write(js)
+
+	return err
 }
