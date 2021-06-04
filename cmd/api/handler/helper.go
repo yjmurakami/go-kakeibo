@@ -33,12 +33,12 @@ type jwt struct {
 	expiration    time.Duration
 }
 
-func NewJWT(c clock.Clock, key string, expiration int) jwt {
+func NewJWT(c clock.Clock, key string, expiration time.Duration) jwt {
 	return jwt{
 		clock:         c,
 		signingMethod: jwtgo.SigningMethodHS256,
 		key:           []byte(key),
-		expiration:    time.Duration(expiration) * time.Minute,
+		expiration:    expiration,
 	}
 }
 

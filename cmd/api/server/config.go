@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/yjmurakami/go-kakeibo/internal/database"
 	"gopkg.in/yaml.v3"
@@ -20,11 +21,11 @@ type config struct {
 
 type apiConfig struct {
 	Port          string `yaml:"port"`
-	IdleTimeout   int    `yaml:"idleTimeout"`
-	ReadTimeout   int    `yaml:"readTimeout"`
-	WriteTimeout  int    `yaml:"writeTimeout"`
+	IdleTimeout   string `yaml:"idleTimeout"`
+	ReadTimeout   string `yaml:"readTimeout"`
+	WriteTimeout  string `yaml:"writeTimeout"`
 	JwtKey        string `yaml:"jwtKey"`
-	JwtExpiration int    `yaml:"jwtExpiration"`
+	JwtExpiration string `yaml:"jwtExpiration"`
 }
 
 func readConfig(filepath string) (*config, error) {
@@ -43,15 +44,18 @@ func readConfig(filepath string) (*config, error) {
 		return nil, fmt.Errorf("%w : api.port is invalid", ErrInvalidConfig)
 	}
 
-	if cnf.Api.IdleTimeout == 0 {
+	_, err = time.ParseDuration(cnf.Api.IdleTimeout)
+	if err != nil {
 		return nil, fmt.Errorf("%w : api.idleTimeout is invalid", ErrInvalidConfig)
 	}
 
-	if cnf.Api.ReadTimeout == 0 {
+	_, err = time.ParseDuration(cnf.Api.ReadTimeout)
+	if err != nil {
 		return nil, fmt.Errorf("%w : api.readTimeout is invalid", ErrInvalidConfig)
 	}
 
-	if cnf.Api.WriteTimeout == 0 {
+	_, err = time.ParseDuration(cnf.Api.WriteTimeout)
+	if err != nil {
 		return nil, fmt.Errorf("%w : api.writeTimeout is invalid", ErrInvalidConfig)
 	}
 
@@ -59,7 +63,8 @@ func readConfig(filepath string) (*config, error) {
 		return nil, fmt.Errorf("%w : api.jwtKey is invalid", ErrInvalidConfig)
 	}
 
-	if cnf.Api.JwtExpiration == 0 {
+	_, err = time.ParseDuration(cnf.Api.JwtExpiration)
+	if err != nil {
 		return nil, fmt.Errorf("%w : api.jwtExpiration is invalid", ErrInvalidConfig)
 	}
 
@@ -77,11 +82,11 @@ func (c *config) String() string {
 	// API
 	fmt.Fprintf(&b, "API\n")
 	fmt.Fprintf(&b, "\tPort\t: %s\n", c.Api.Port)
-	fmt.Fprintf(&b, "\tIdleTimeout\t: %d\n", c.Api.IdleTimeout)
-	fmt.Fprintf(&b, "\tReadTimeout\t: %d\n", c.Api.ReadTimeout)
-	fmt.Fprintf(&b, "\tWriteTimeout\t: %d\n", c.Api.WriteTimeout)
+	fmt.Fprintf(&b, "\tIdleTimeout\t: %s\n", c.Api.IdleTimeout)
+	fmt.Fprintf(&b, "\tReadTimeout\t: %s\n", c.Api.ReadTimeout)
+	fmt.Fprintf(&b, "\tWriteTimeout\t: %s\n", c.Api.WriteTimeout)
 	fmt.Fprintf(&b, "\tJwtKey\t: %s\n", c.Api.JwtKey)
-	fmt.Fprintf(&b, "\tJwtExpiration\t: %d\n", c.Api.JwtExpiration)
+	fmt.Fprintf(&b, "\tJwtExpiration\t: %s\n", c.Api.JwtExpiration)
 
 	// MySQL
 	fmt.Fprintf(&b, "MySQL\n")
@@ -91,7 +96,7 @@ func (c *config) String() string {
 	fmt.Fprintf(&b, "\tPassword\t: %s\n", c.MySQL.Password)
 	fmt.Fprintf(&b, "\tMaxOpenConns\t: %d\n", c.MySQL.MaxOpenConns)
 	fmt.Fprintf(&b, "\tMaxIdleConns\t: %d\n", c.MySQL.MaxIdleConns)
-	fmt.Fprintf(&b, "\tMaxLifetime \t: %d\n", c.MySQL.MaxLifetime)
+	fmt.Fprintf(&b, "\tMaxIdleTime \t: %s\n", c.MySQL.MaxIdleTime)
 
 	return b.String()
 }

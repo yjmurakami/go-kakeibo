@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"time"
@@ -15,7 +16,7 @@ type MySQLConfig struct {
 	Password     string `yaml:"password"`
 	MaxOpenConns int    `yaml:"maxOpenConns"`
 	MaxIdleConns int    `yaml:"maxIdleConns"`
-	MaxLifetime  int    `yaml:"maxLifetime"`
+	MaxIdleTime  string `yaml:"maxIdleTime"`
 }
 
 func ValidateMySQLConfig(cnf MySQLConfig) error {
@@ -43,8 +44,9 @@ func ValidateMySQLConfig(cnf MySQLConfig) error {
 		return fmt.Errorf("mysql.maxIdleConns is invalid")
 	}
 
-	if cnf.MaxLifetime == 0 {
-		return fmt.Errorf("mysql.maxLifetime is invalid")
+	_, err := time.ParseDuration(cnf.MaxIdleTime)
+	if err != nil {
+		return fmt.Errorf("mysql.MaxIdleTime is invalid")
 	}
 
 	return nil
@@ -57,11 +59,19 @@ func OpenMySQL(conf MySQLConfig) (*sql.DB, error) {
 		return nil, err
 	}
 
+	maxIdleTime, err := time.ParseDuration(conf.MaxIdleTime)
+	if err != nil {
+		return nil, err
+	}
+
 	db.SetMaxOpenConns(conf.MaxOpenConns)
 	db.SetMaxIdleConns(conf.MaxIdleConns)
-	db.SetConnMaxLifetime(time.Duration(conf.MaxLifetime) * time.Minute)
+	db.SetConnMaxIdleTime(maxIdleTime)
 
-	err = db.Ping()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	err = db.PingContext(ctx)
 	if err != nil {
 		return nil, err
 	}

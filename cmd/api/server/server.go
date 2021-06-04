@@ -25,8 +25,13 @@ func Start() error {
 	}
 	defer db.Close()
 
+	jwtExpiration, err := time.ParseDuration(cnf.Api.JwtExpiration)
+	if err != nil {
+		return err
+	}
+
 	timer := clock.SystemClock{}
-	jwt := handler.NewJWT(timer, cnf.Api.JwtKey, cnf.Api.JwtExpiration)
+	jwt := handler.NewJWT(timer, cnf.Api.JwtKey, jwtExpiration)
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 
 	hc := handlerConfig{
@@ -46,16 +51,31 @@ func Start() error {
 		hc.jwt,
 		hc.clock,
 	)
-	mux := newRouter(mdl, hc)
+	mux := newRouter(nil, hc) // TODO middleware
 	mux = mdl.RecoverPanic(mux)
+
+	idleTimeout, err := time.ParseDuration(cnf.Api.IdleTimeout)
+	if err != nil {
+		return err
+	}
+
+	readTimeout, err := time.ParseDuration(cnf.Api.ReadTimeout)
+	if err != nil {
+		return err
+	}
+
+	writeTimeout, err := time.ParseDuration(cnf.Api.WriteTimeout)
+	if err != nil {
+		return err
+	}
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%s", cnf.Api.Port),
 		ErrorLog:     log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Llongfile), // TODO
 		Handler:      mux,
-		IdleTimeout:  time.Duration(cnf.Api.IdleTimeout) * time.Second,
-		ReadTimeout:  time.Duration(cnf.Api.ReadTimeout) * time.Second,
-		WriteTimeout: time.Duration(cnf.Api.WriteTimeout) * time.Second,
+		IdleTimeout:  idleTimeout,
+		ReadTimeout:  readTimeout,
+		WriteTimeout: writeTimeout,
 	}
 
 	log.Printf("server is running\n%s", cnf)
