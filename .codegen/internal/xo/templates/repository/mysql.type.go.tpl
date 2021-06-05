@@ -82,7 +82,19 @@ func (r *{{ $lowerName }}Repository) Update(db database.DB, e *entity.{{ .Name }
 		WHERE {{ colnamesquery .PrimaryKeyFields " AND " }}
 	`
 
-	_, err := db.Exec(query, {{ fieldnamesmulti .Fields "e" .PrimaryKeyFields }}, {{ fieldnames .PrimaryKeyFields "e"}})
+	result, err := db.Exec(query, {{ fieldnamesmulti .Fields "e" .PrimaryKeyFields }}, {{ fieldnames .PrimaryKeyFields "e"}})
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return sql.ErrNoRows
+	}
+
 	return err
 {{- else -}}
 	query := `
@@ -91,7 +103,19 @@ func (r *{{ $lowerName }}Repository) Update(db database.DB, e *entity.{{ .Name }
 		WHERE {{ colname .PrimaryKey.Col }} = ?
 	`
 
-	_, err := db.Exec(query, {{ fieldnames .Fields "e" .PrimaryKey.Name }}, e.{{ .PrimaryKey.Name }})
+	result, err := db.Exec(query, {{ fieldnames .Fields "e" .PrimaryKey.Name }}, e.{{ .PrimaryKey.Name }})
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return sql.ErrNoRows
+	}
+
 	return err
 {{- end }}
 }
@@ -107,14 +131,36 @@ func (r *{{ $lowerName }}Repository) Delete(db database.DB, e *entity.{{ .Name }
 		WHERE {{ colnamesquery .PrimaryKeyFields " AND " }}
 	`
 
-	_, err := db.Exec(query, {{ fieldnames .PrimaryKeyFields "e" }})
+	result, err := db.Exec(query, {{ fieldnames .PrimaryKeyFields "e" }})
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return sql.ErrNoRows
+	}
 {{- else -}}
 	query := `
 		DELETE FROM {{ $table }}
 		WHERE {{ colname .PrimaryKey.Col }} = ?
 	`
 
-	_, err := db.Exec(query, e.{{ .PrimaryKey.Name }})
+	result, err := db.Exec(query, e.{{ .PrimaryKey.Name }})
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return sql.ErrNoRows
+	}
 {{ end -}}
 	return err
 }

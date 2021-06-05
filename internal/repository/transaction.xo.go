@@ -3,6 +3,8 @@
 package repository
 
 import (
+	"database/sql"
+
 	"github.com/yjmurakami/go-kakeibo/internal/database"
 	"github.com/yjmurakami/go-kakeibo/internal/entity"
 )
@@ -70,7 +72,19 @@ func (r *transactionRepository) Update(db database.DB, e *entity.Transaction) er
 		WHERE id = ?
 	`
 
-	_, err := db.Exec(query, e.UserID, e.Date, e.CategoryID, e.Amount, e.Note, e.CreatedAt, e.ModifiedAt, e.ID)
+	result, err := db.Exec(query, e.UserID, e.Date, e.CategoryID, e.Amount, e.Note, e.CreatedAt, e.ModifiedAt, e.ID)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return sql.ErrNoRows
+	}
+
 	return err
 }
 
@@ -80,7 +94,18 @@ func (r *transactionRepository) Delete(db database.DB, e *entity.Transaction) er
 		WHERE id = ?
 	`
 
-	_, err := db.Exec(query, e.ID)
+	result, err := db.Exec(query, e.ID)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return sql.ErrNoRows
+	}
 	return err
 }
 

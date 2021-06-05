@@ -106,5 +106,47 @@ func (h *transactionHandler) V1TransactionsTransactionIdGet() http.HandlerFunc {
 }
 
 func (h *transactionHandler) V1TransactionsTransactionIdPut() http.HandlerFunc {
-	panic("not implemented") // TODO: Implement
+	type response struct {
+		Data *openapi.V1TransactionsRes `json:"data"`
+	}
+	return func(w http.ResponseWriter, r *http.Request) {
+		id, err := getParamId(r, "transactionId")
+		if err != nil {
+			NotFoundError(w, r)
+			return
+		}
+
+		oaReq := &openapi.V1TransactionsTransactionIdPutReq{}
+		err = decodeJSON(w, r, oaReq)
+		if err != nil {
+			badRequestError(w, r, err)
+			return
+		}
+
+		v := validator.New()
+		v.ValidateStruct(oaReq)
+		if !v.Valid() {
+			unprocessableEntityError(w, r, v.Errors())
+			return
+		}
+
+		oaRes, err := h.service.V1TransactionsTransactionIdPut(r.Context(), id, oaReq)
+		if err != nil {
+			if errors.Is(err, core.ErrNoResource) {
+				NotFoundError(w, r)
+			} else {
+				serverError(w, r, err)
+			}
+			return
+		}
+
+		res := response{
+			Data: oaRes,
+		}
+		err = encodeJSON(w, http.StatusOK, res, nil)
+		if err != nil {
+			serverError(w, r, err)
+			return
+		}
+	}
 }

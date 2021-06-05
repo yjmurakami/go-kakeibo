@@ -103,5 +103,53 @@ func (s *transactionService) V1TransactionsTransactionIdGet(ctx context.Context,
 }
 
 func (s *transactionService) V1TransactionsTransactionIdPut(ctx context.Context, transactionId int, oaReq *openapi.V1TransactionsTransactionIdPutReq) (*openapi.V1TransactionsRes, error) {
-	panic("not implemented") // TODO: Implement
+	transaction, err := s.repos.Transaction.SelectByID(s.db, transactionId)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, core.ErrNoResource
+		}
+		return nil, err
+	}
+
+	category, err := s.repos.Category.SelectByID(s.db, oaReq.CategoryId)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, core.ErrInvalidParameter{
+				Key:     "categoryId",
+				Message: "the value is invalid",
+			}
+		}
+		return nil, err
+	}
+
+	dt, err := time.Parse(openapi.DateFormat, oaReq.Date)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO 権限チェック
+
+	transaction.Date = dt
+	transaction.CategoryID = category.ID
+	transaction.Amount = oaReq.Amount
+	transaction.Note = oaReq.Note
+	transaction.ModifiedAt = s.clock.Now()
+
+	err = s.repos.Transaction.Update(s.db, transaction)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, core.ErrNoResource
+		}
+		return nil, err
+	}
+
+	oaRes := &openapi.V1TransactionsRes{
+		Id:         transaction.ID,
+		Date:       transaction.Date.Format(openapi.DateFormat),
+		Type:       category.Type,
+		CategoryId: transaction.CategoryID,
+		Amount:     transaction.Amount,
+		Note:       transaction.Note,
+	}
+	return oaRes, nil
 }

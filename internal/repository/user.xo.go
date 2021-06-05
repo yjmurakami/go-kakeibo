@@ -3,6 +3,8 @@
 package repository
 
 import (
+	"database/sql"
+
 	"github.com/yjmurakami/go-kakeibo/internal/database"
 	"github.com/yjmurakami/go-kakeibo/internal/entity"
 )
@@ -70,7 +72,19 @@ func (r *userRepository) Update(db database.DB, e *entity.User) error {
 		WHERE id = ?
 	`
 
-	_, err := db.Exec(query, e.LoginID, e.LoginPassword, e.CreatedAt, e.ModifiedAt, e.ID)
+	result, err := db.Exec(query, e.LoginID, e.LoginPassword, e.CreatedAt, e.ModifiedAt, e.ID)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return sql.ErrNoRows
+	}
+
 	return err
 }
 
@@ -80,7 +94,18 @@ func (r *userRepository) Delete(db database.DB, e *entity.User) error {
 		WHERE id = ?
 	`
 
-	_, err := db.Exec(query, e.ID)
+	result, err := db.Exec(query, e.ID)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return sql.ErrNoRows
+	}
 	return err
 }
 
