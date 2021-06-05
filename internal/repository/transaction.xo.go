@@ -12,7 +12,7 @@ type transactionRepository struct{}
 
 func (r *transactionRepository) SelectAll(db database.DB) ([]*entity.Transaction, error) {
 	query := `
-		SELECT id, user_id, date, category_id, amount, comment, created_at, modified_at
+		SELECT id, user_id, date, category_id, amount, note, created_at, modified_at
 		FROM kakeibo.transactions
 		ORDER BY id
 	`
@@ -26,7 +26,7 @@ func (r *transactionRepository) SelectAll(db database.DB) ([]*entity.Transaction
 	s := []*entity.Transaction{}
 	for rows.Next() {
 		e := entity.Transaction{}
-		err = rows.Scan(&e.ID, &e.UserID, &e.Date, &e.CategoryID, &e.Amount, &e.Comment, &e.CreatedAt, &e.ModifiedAt)
+		err = rows.Scan(&e.ID, &e.UserID, &e.Date, &e.CategoryID, &e.Amount, &e.Note, &e.CreatedAt, &e.ModifiedAt)
 		if err != nil {
 			return nil, err
 		}
@@ -43,13 +43,13 @@ func (r *transactionRepository) SelectAll(db database.DB) ([]*entity.Transaction
 func (r *transactionRepository) Insert(db database.DB, e *entity.Transaction) error {
 	query := `
 		INSERT INTO kakeibo.transactions (
-			user_id, date, category_id, amount, comment, created_at, modified_at
+			user_id, date, category_id, amount, note, created_at, modified_at
 		) VALUES (
 			?, ?, ?, ?, ?, ?, ?
 		)
 	`
 
-	res, err := db.Exec(query, e.UserID, e.Date, e.CategoryID, e.Amount, e.Comment, e.CreatedAt, e.ModifiedAt)
+	res, err := db.Exec(query, e.UserID, e.Date, e.CategoryID, e.Amount, e.Note, e.CreatedAt, e.ModifiedAt)
 	if err != nil {
 		return err
 	}
@@ -66,11 +66,11 @@ func (r *transactionRepository) Insert(db database.DB, e *entity.Transaction) er
 func (r *transactionRepository) Update(db database.DB, e *entity.Transaction) error {
 	query := `
 		UPDATE kakeibo.transactions SET
-			user_id = ?, date = ?, category_id = ?, amount = ?, comment = ?, created_at = ?, modified_at = ?
+			user_id = ?, date = ?, category_id = ?, amount = ?, note = ?, created_at = ?, modified_at = ?
 		WHERE id = ?
 	`
 
-	_, err := db.Exec(query, e.UserID, e.Date, e.CategoryID, e.Amount, e.Comment, e.CreatedAt, e.ModifiedAt, e.ID)
+	_, err := db.Exec(query, e.UserID, e.Date, e.CategoryID, e.Amount, e.Note, e.CreatedAt, e.ModifiedAt, e.ID)
 	return err
 }
 
@@ -87,7 +87,7 @@ func (r *transactionRepository) Delete(db database.DB, e *entity.Transaction) er
 // Generated from index 'category_id'.
 func (r *transactionRepository) SelectByCategoryID(db database.DB, categoryID int) ([]*entity.Transaction, error) {
 	query := `
-		SELECT id, user_id, date, category_id, amount, comment, created_at, modified_at
+		SELECT id, user_id, date, category_id, amount, note, created_at, modified_at
 		FROM kakeibo.transactions
 		WHERE category_id = ?
 		ORDER BY id
@@ -101,7 +101,7 @@ func (r *transactionRepository) SelectByCategoryID(db database.DB, categoryID in
 	s := []*entity.Transaction{}
 	for rows.Next() {
 		e := entity.Transaction{}
-		err = rows.Scan(&e.ID, &e.UserID, &e.Date, &e.CategoryID, &e.Amount, &e.Comment, &e.CreatedAt, &e.ModifiedAt)
+		err = rows.Scan(&e.ID, &e.UserID, &e.Date, &e.CategoryID, &e.Amount, &e.Note, &e.CreatedAt, &e.ModifiedAt)
 		if err != nil {
 			return nil, err
 		}
@@ -118,12 +118,12 @@ func (r *transactionRepository) SelectByCategoryID(db database.DB, categoryID in
 // Generated from index 'transactions_id_pkey'.
 func (r *transactionRepository) SelectByID(db database.DB, id int) (*entity.Transaction, error) {
 	query := `
-		SELECT id, user_id, date, category_id, amount, comment, created_at, modified_at
+		SELECT id, user_id, date, category_id, amount, note, created_at, modified_at
 		FROM kakeibo.transactions
 		WHERE id = ?
 	`
 	e := entity.Transaction{}
-	err := db.QueryRow(query, id).Scan(&e.ID, &e.UserID, &e.Date, &e.CategoryID, &e.Amount, &e.Comment, &e.CreatedAt, &e.ModifiedAt)
+	err := db.QueryRow(query, id).Scan(&e.ID, &e.UserID, &e.Date, &e.CategoryID, &e.Amount, &e.Note, &e.CreatedAt, &e.ModifiedAt)
 	if err != nil {
 		return nil, err
 	}
@@ -133,7 +133,7 @@ func (r *transactionRepository) SelectByID(db database.DB, id int) (*entity.Tran
 // Generated from index 'user_id'.
 func (r *transactionRepository) SelectByUserID(db database.DB, userID int) ([]*entity.Transaction, error) {
 	query := `
-		SELECT id, user_id, date, category_id, amount, comment, created_at, modified_at
+		SELECT id, user_id, date, category_id, amount, note, created_at, modified_at
 		FROM kakeibo.transactions
 		WHERE user_id = ?
 		ORDER BY id
@@ -147,7 +147,7 @@ func (r *transactionRepository) SelectByUserID(db database.DB, userID int) ([]*e
 	s := []*entity.Transaction{}
 	for rows.Next() {
 		e := entity.Transaction{}
-		err = rows.Scan(&e.ID, &e.UserID, &e.Date, &e.CategoryID, &e.Amount, &e.Comment, &e.CreatedAt, &e.ModifiedAt)
+		err = rows.Scan(&e.ID, &e.UserID, &e.Date, &e.CategoryID, &e.Amount, &e.Note, &e.CreatedAt, &e.ModifiedAt)
 		if err != nil {
 			return nil, err
 		}

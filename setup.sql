@@ -48,7 +48,7 @@ CREATE TABLE `transactions` (
   `date` date NOT NULL,
   `category_id` int(10) unsigned NOT NULL,
   `amount` int(10) unsigned NOT NULL,
-  `comment` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `note` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` datetime NOT NULL,
   `modified_at` datetime NOT NULL,
   PRIMARY KEY (`id`),

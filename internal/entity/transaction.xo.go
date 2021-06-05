@@ -13,7 +13,7 @@ type Transaction struct {
 	Date       time.Time // date
 	CategoryID int       // category_id
 	Amount     int       // amount
-	Comment    string    // comment
+	Note       string    // note
 	CreatedAt  time.Time // created_at
 	ModifiedAt time.Time // modified_at
 }
