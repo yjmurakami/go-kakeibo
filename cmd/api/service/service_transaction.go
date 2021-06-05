@@ -76,7 +76,25 @@ func (s *transactionService) V1TransactionsGet(ctx context.Context) ([]*openapi.
 }
 
 func (s *transactionService) V1TransactionsTransactionIdDelete(ctx context.Context, transactionId int) error {
-	panic("not implemented") // TODO: Implement
+	transaction, err := s.repos.Transaction.SelectByID(s.db, transactionId)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return core.ErrNoResource
+		}
+		return err
+	}
+
+	// TODO 権限チェック
+
+	err = s.repos.Transaction.Delete(s.db, transaction)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return core.ErrNoResource
+		}
+		return err
+	}
+
+	return nil
 }
 
 func (s *transactionService) V1TransactionsTransactionIdGet(ctx context.Context, transactionId int) (*openapi.V1TransactionsRes, error) {
@@ -88,7 +106,7 @@ func (s *transactionService) V1TransactionsTransactionIdGet(ctx context.Context,
 		return nil, err
 	}
 
-	// TODO ログインユーザーのデータでなければエラー
+	// TODO 権限チェック
 
 	// TODO 共通化
 	oaRes := &openapi.V1TransactionsRes{

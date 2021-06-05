@@ -70,7 +70,35 @@ func (h *transactionHandler) V1TransactionsGet() http.HandlerFunc {
 }
 
 func (h *transactionHandler) V1TransactionsTransactionIdDelete() http.HandlerFunc {
-	panic("not implemented") // TODO: Implement
+	type response struct {
+		Message string `json:"message"`
+	}
+	return func(w http.ResponseWriter, r *http.Request) {
+		id, err := getParamId(r, "transactionId")
+		if err != nil {
+			NotFoundError(w, r)
+			return
+		}
+
+		err = h.service.V1TransactionsTransactionIdDelete(r.Context(), id)
+		if err != nil {
+			if errors.Is(err, core.ErrNoResource) {
+				NotFoundError(w, r)
+			} else {
+				serverError(w, r, err)
+			}
+			return
+		}
+
+		res := response{
+			Message: "successfully deleted",
+		}
+		err = encodeJSON(w, http.StatusOK, res, nil)
+		if err != nil {
+			serverError(w, r, err)
+			return
+		}
+	}
 }
 
 func (h *transactionHandler) V1TransactionsTransactionIdGet() http.HandlerFunc {
