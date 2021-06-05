@@ -20,7 +20,7 @@ func (r *categoryRepository) SelectAll(db database.DB) ([]*entity.Category, erro
 		ORDER BY id
 	`
 
-	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
 	defer cancel()
 
 	rows, err := db.QueryContext(ctx, query)
@@ -55,7 +55,7 @@ func (r *categoryRepository) Insert(db database.DB, e *entity.Category) error {
 		)
 	`
 
-	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
 	defer cancel()
 
 	res, err := db.ExecContext(ctx, query, e.Type, e.Name, e.CreatedAt, e.ModifiedAt)
@@ -79,7 +79,7 @@ func (r *categoryRepository) Update(db database.DB, e *entity.Category) error {
 		WHERE id = ? AND version = ?
 	`
 
-	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
 	defer cancel()
 
 	result, err := db.ExecContext(ctx, query, e.Type, e.Name, e.CreatedAt, e.ModifiedAt, e.ID, e.Version)
@@ -105,7 +105,7 @@ func (r *categoryRepository) Delete(db database.DB, e *entity.Category) error {
 		WHERE id = ?
 	`
 
-	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
 	defer cancel()
 
 	result, err := db.ExecContext(ctx, query, e.ID)
@@ -131,7 +131,7 @@ func (r *categoryRepository) SelectByID(db database.DB, id int) (*entity.Categor
 		WHERE id = ?
 	`
 
-	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
 	defer cancel()
 	e := entity.Category{}
 	err := db.QueryRowContext(ctx, query, id).Scan(&e.ID, &e.Type, &e.Name, &e.CreatedAt, &e.ModifiedAt, &e.Version)
@@ -149,7 +149,7 @@ func (r *categoryRepository) SelectByTypeName(db database.DB, typ int, name stri
 		WHERE type = ? AND name = ?
 	`
 
-	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
 	defer cancel()
 	e := entity.Category{}
 	err := db.QueryRowContext(ctx, query, typ, name).Scan(&e.ID, &e.Type, &e.Name, &e.CreatedAt, &e.ModifiedAt, &e.Version)

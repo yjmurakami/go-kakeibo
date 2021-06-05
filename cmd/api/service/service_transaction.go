@@ -8,6 +8,7 @@ import (
 
 	"github.com/yjmurakami/go-kakeibo/cmd/api/core"
 	"github.com/yjmurakami/go-kakeibo/cmd/api/core/openapi"
+	"github.com/yjmurakami/go-kakeibo/cmd/api/queryservice"
 	"github.com/yjmurakami/go-kakeibo/internal/clock"
 	"github.com/yjmurakami/go-kakeibo/internal/entity"
 	"github.com/yjmurakami/go-kakeibo/internal/repository"
@@ -15,13 +16,15 @@ import (
 
 type transactionService struct {
 	db    *sql.DB
+	qs    queryservice.TransactionQueryService
 	repos repository.Repositories
 	clock clock.Clock
 }
 
-func NewTransactionService(db *sql.DB, repos repository.Repositories, clock clock.Clock) *transactionService {
+func NewTransactionService(db *sql.DB, qs queryservice.TransactionQueryService, repos repository.Repositories, clock clock.Clock) *transactionService {
 	return &transactionService{
 		db:    db,
+		qs:    qs,
 		repos: repos,
 		clock: clock,
 	}
@@ -98,7 +101,7 @@ func (s *transactionService) V1TransactionsTransactionIdDelete(ctx context.Conte
 }
 
 func (s *transactionService) V1TransactionsTransactionIdGet(ctx context.Context, transactionId int) (*openapi.V1TransactionsRes, error) {
-	transaction, err := s.repos.Transaction.SelectByID(s.db, transactionId)
+	transaction, err := s.qs.SelectTransactionByID(s.db, transactionId)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, core.ErrNoResource
@@ -112,7 +115,7 @@ func (s *transactionService) V1TransactionsTransactionIdGet(ctx context.Context,
 	oaRes := &openapi.V1TransactionsRes{
 		Id:         transaction.ID,
 		Date:       transaction.Date.Format(openapi.DateFormat),
-		Type:       0, // TODO SQL JOIN
+		Type:       transaction.CategoryType,
 		CategoryId: transaction.CategoryID,
 		Amount:     transaction.Amount,
 		Note:       transaction.Note,

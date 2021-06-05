@@ -20,7 +20,7 @@ func (r *transactionRepository) SelectAll(db database.DB) ([]*entity.Transaction
 		ORDER BY id
 	`
 
-	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
 	defer cancel()
 
 	rows, err := db.QueryContext(ctx, query)
@@ -55,7 +55,7 @@ func (r *transactionRepository) Insert(db database.DB, e *entity.Transaction) er
 		)
 	`
 
-	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
 	defer cancel()
 
 	res, err := db.ExecContext(ctx, query, e.UserID, e.Date, e.CategoryID, e.Amount, e.Note, e.CreatedAt, e.ModifiedAt)
@@ -79,7 +79,7 @@ func (r *transactionRepository) Update(db database.DB, e *entity.Transaction) er
 		WHERE id = ? AND version = ?
 	`
 
-	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
 	defer cancel()
 
 	result, err := db.ExecContext(ctx, query, e.UserID, e.Date, e.CategoryID, e.Amount, e.Note, e.CreatedAt, e.ModifiedAt, e.ID, e.Version)
@@ -105,7 +105,7 @@ func (r *transactionRepository) Delete(db database.DB, e *entity.Transaction) er
 		WHERE id = ?
 	`
 
-	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
 	defer cancel()
 
 	result, err := db.ExecContext(ctx, query, e.ID)
@@ -132,7 +132,7 @@ func (r *transactionRepository) SelectByCategoryID(db database.DB, categoryID in
 		ORDER BY id
 	`
 
-	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
 	defer cancel()
 	rows, err := db.QueryContext(ctx, query, categoryID)
 	if err != nil {
@@ -165,7 +165,7 @@ func (r *transactionRepository) SelectByID(db database.DB, id int) (*entity.Tran
 		WHERE id = ?
 	`
 
-	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
 	defer cancel()
 	e := entity.Transaction{}
 	err := db.QueryRowContext(ctx, query, id).Scan(&e.ID, &e.UserID, &e.Date, &e.CategoryID, &e.Amount, &e.Note, &e.CreatedAt, &e.ModifiedAt, &e.Version)
@@ -184,7 +184,7 @@ func (r *transactionRepository) SelectByUserID(db database.DB, userID int) ([]*e
 		ORDER BY id
 	`
 
-	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
 	defer cancel()
 	rows, err := db.QueryContext(ctx, query, userID)
 	if err != nil {

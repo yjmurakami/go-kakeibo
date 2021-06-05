@@ -7,7 +7,7 @@ func {{ .Name }} (db database.DB{{ range .QueryUniqueParams }}, {{ .Name }} {{ .
 		{{ $l }}{{ end }}
 	`
 
-	ctx, cancel := context.WithTimeout(context.Background(), repository.QueryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
 	defer cancel()
 
 {{ if .OnlyOne }}

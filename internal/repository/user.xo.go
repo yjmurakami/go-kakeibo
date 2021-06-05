@@ -20,7 +20,7 @@ func (r *userRepository) SelectAll(db database.DB) ([]*entity.User, error) {
 		ORDER BY id
 	`
 
-	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
 	defer cancel()
 
 	rows, err := db.QueryContext(ctx, query)
@@ -55,7 +55,7 @@ func (r *userRepository) Insert(db database.DB, e *entity.User) error {
 		)
 	`
 
-	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
 	defer cancel()
 
 	res, err := db.ExecContext(ctx, query, e.LoginID, e.LoginPassword, e.CreatedAt, e.ModifiedAt)
@@ -79,7 +79,7 @@ func (r *userRepository) Update(db database.DB, e *entity.User) error {
 		WHERE id = ? AND version = ?
 	`
 
-	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
 	defer cancel()
 
 	result, err := db.ExecContext(ctx, query, e.LoginID, e.LoginPassword, e.CreatedAt, e.ModifiedAt, e.ID, e.Version)
@@ -105,7 +105,7 @@ func (r *userRepository) Delete(db database.DB, e *entity.User) error {
 		WHERE id = ?
 	`
 
-	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
 	defer cancel()
 
 	result, err := db.ExecContext(ctx, query, e.ID)
@@ -131,7 +131,7 @@ func (r *userRepository) SelectByLoginID(db database.DB, loginID string) (*entit
 		WHERE login_id = ?
 	`
 
-	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
 	defer cancel()
 	e := entity.User{}
 	err := db.QueryRowContext(ctx, query, loginID).Scan(&e.ID, &e.LoginID, &e.LoginPassword, &e.CreatedAt, &e.ModifiedAt, &e.Version)
@@ -149,7 +149,7 @@ func (r *userRepository) SelectByID(db database.DB, id int) (*entity.User, error
 		WHERE id = ?
 	`
 
-	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
 	defer cancel()
 	e := entity.User{}
 	err := db.QueryRowContext(ctx, query, id).Scan(&e.ID, &e.LoginID, &e.LoginPassword, &e.CreatedAt, &e.ModifiedAt, &e.Version)

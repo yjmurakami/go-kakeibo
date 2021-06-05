@@ -11,7 +11,7 @@ func (r *{{ $lowerName }}Repository) Select{{ .FuncName }}(db database.DB{{ gopa
 		ORDER BY {{ colnames .Type.PrimaryKeyFields }}{{ end }}
 	`
 
-	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
 	defer cancel()
 
 {{- if .Index.IsUnique }}

@@ -3,6 +3,11 @@ package database
 import (
 	"context"
 	"database/sql"
+	"time"
+)
+
+const (
+	QueryTimeout = 5 * time.Second
 )
 
 type DB interface {

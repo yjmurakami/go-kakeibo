@@ -11,7 +11,7 @@ func (r *{{ $lowerName }}Repository) SelectAll(db database.DB) ([]*entity.{{ .Na
 		ORDER BY {{ colnames .PrimaryKeyFields }}
 	`
 
-	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
 	defer cancel()
 
 	rows, err := db.QueryContext(ctx, query)
@@ -48,7 +48,7 @@ func (r *{{ $lowerName }}Repository) Insert(db database.DB, e *entity.{{ .Name }
 		)
 	`
 
-	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
 	defer cancel()
 
 	_, err := db.ExecContext(ctx, query, {{ fieldnames .Fields "e" "Version" }})
@@ -64,7 +64,7 @@ func (r *{{ $lowerName }}Repository) Insert(db database.DB, e *entity.{{ .Name }
 		)
 	`
 
-	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
 	defer cancel()
 
 	res, err := db.ExecContext(ctx, query, {{ fieldnames .Fields "e" .PrimaryKey.Name "Version" }})
@@ -91,7 +91,7 @@ func (r *{{ $lowerName }}Repository) Update(db database.DB, e *entity.{{ .Name }
 		WHERE {{ colnamesquery .PrimaryKeyFields " AND " }}
 	`
 
-	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
 	defer cancel()
 
 	result, err := db.ExecContext(ctx, query, {{ fieldnamesmulti .Fields "e" .PrimaryKeyFields }}, {{ fieldnames .PrimaryKeyFields "e"}})
@@ -115,7 +115,7 @@ func (r *{{ $lowerName }}Repository) Update(db database.DB, e *entity.{{ .Name }
 		WHERE {{ colname .PrimaryKey.Col }} = ? AND version = ?
 	`
 
-	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
 	defer cancel()
 
 	result, err := db.ExecContext(ctx, query, {{ fieldnames .Fields "e" .PrimaryKey.Name "Version" }}, e.{{ .PrimaryKey.Name }}, e.Version)
@@ -147,7 +147,7 @@ func (r *{{ $lowerName }}Repository) Delete(db database.DB, e *entity.{{ .Name }
 		WHERE {{ colnamesquery .PrimaryKeyFields " AND " }}
 	`
 
-	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
 	defer cancel()
 
 	result, err := db.ExecContext(ctx, query, {{ fieldnames .PrimaryKeyFields "e" }})
@@ -168,7 +168,7 @@ func (r *{{ $lowerName }}Repository) Delete(db database.DB, e *entity.{{ .Name }
 		WHERE {{ colname .PrimaryKey.Col }} = ?
 	`
 
-	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
 	defer cancel()
 
 	result, err := db.ExecContext(ctx, query, e.{{ .PrimaryKey.Name }})

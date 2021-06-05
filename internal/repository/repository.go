@@ -1,11 +1,5 @@
 package repository
 
-import "time"
-
-const (
-	QueryTimeout = 5 * time.Second
-)
-
 type Repositories struct {
 	Category    CategoryRepository
 	User        UserRepository

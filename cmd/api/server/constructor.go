@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/yjmurakami/go-kakeibo/cmd/api/handler"
+	"github.com/yjmurakami/go-kakeibo/cmd/api/queryservice"
 	"github.com/yjmurakami/go-kakeibo/cmd/api/service"
 	"github.com/yjmurakami/go-kakeibo/internal/clock"
 	"github.com/yjmurakami/go-kakeibo/internal/repository"
@@ -23,6 +24,7 @@ func initTransactionHandler(hc handlerConfig) handler.TransactionHandler {
 	return handler.NewTransactionHandler(
 		service.NewTransactionService(
 			hc.db,
+			queryservice.NewTransactionQueryService(),
 			hc.repos,
 			hc.clock,
 		),
