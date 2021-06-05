@@ -20,7 +20,13 @@ type handlerConfig struct {
 }
 
 func initTransactionHandler(hc handlerConfig) handler.TransactionHandler {
-	return nil
+	return handler.NewTransactionHandler(
+		service.NewTransactionService(
+			hc.db,
+			hc.repos,
+			hc.clock,
+		),
+	)
 }
 
 func initCategoryHandler(hc handlerConfig) handler.CategoryHandler {

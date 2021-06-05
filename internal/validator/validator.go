@@ -1,13 +1,16 @@
 package validator
 
 import (
+	"fmt"
 	"reflect"
 	"strings"
 
 	"github.com/go-playground/validator/v10"
 )
 
-var inner = validator.New()
+var (
+	inner = validator.New()
+)
 
 type Validator struct {
 	inner  *validator.Validate
@@ -60,6 +63,31 @@ func (v *Validator) ValidateStruct(s interface{}) {
 
 	// Client error
 	for _, err := range err.(validator.ValidationErrors) {
-		v.AddError(err.Field(), err.Error())
+		msg := ""
+
+		switch err.Tag() {
+		case "datetime":
+			msg = fmt.Sprintf("the format must be %s", err.Param())
+		case "max":
+			if err.Type().Kind() == reflect.String {
+				msg = fmt.Sprintf("the length must be less than or equal to %s", err.Param())
+			} else if err.Type().Kind() == reflect.Int {
+				msg = fmt.Sprintf("the value must be less than or equal to %s", err.Param())
+			}
+		case "min":
+			if err.Type().Kind() == reflect.String {
+				msg = fmt.Sprintf("the length must be more than or equal to %s", err.Param())
+			} else if err.Type().Kind() == reflect.Int {
+				msg = fmt.Sprintf("the value must be more than or equal to %s", err.Param())
+			}
+		case "oneof":
+			msg = fmt.Sprintf("the value must be one of the followings [%s]", err.Param())
+		case "required":
+			msg = "the value is required"
+		default:
+			msg = "no message"
+		}
+
+		v.AddError(err.Field(), msg)
 	}
 }

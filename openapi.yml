@@ -61,7 +61,7 @@ paths:
             schema:
               $ref: "#/components/schemas/V1TransactionsPostReq"
       responses:
-        "200":
+        "201":
           description: ""
           content:
             application/json:
@@ -155,24 +155,29 @@ components:
         date:
           type: string
           format: date
+          x-go-validate: required,datetime=2006-01-02
         type:
           type: integer
           enum:
-            - 0
             - 1
+            - 2
           description: >
             Transaction type:
-              * 0 - income
-              * 1 - expense
+              * 1 - income
+              * 2 - expense
+          x-go-validate: required,oneof=1 2
         categoryId:
           type: integer
+          x-go-validate: min=1,max=999999999
         amount:
           type: integer
           minimum: 1
           maximum: 999999999
+          x-go-validate: min=1,max=999999999
         note:
           type: string
           maxLength: 1000
+          x-go-validate: max=1000
     V1TransactionsTransactionIdPutReq:
       type: object
       required:
@@ -184,6 +189,7 @@ components:
         date:
           type: string
           format: date
+          x-go-validate: required,datetime=2006-01-02
         type:
           type: integer
           enum:
@@ -191,17 +197,21 @@ components:
             - 1
           description: >
             Transaction type:
-              * 0 - income
-              * 1 - expense
+              * 1 - income
+              * 2 - expense
+          x-go-validate: required,oneof=1 2
         categoryId:
           type: integer
+          x-go-validate: min=1,max=999999999
         amount:
           type: integer
           minimum: 1
           maximum: 999999999
+          x-go-validate: min=1,max=999999999
         note:
           type: string
           maxLength: 1000
+          x-go-validate: max=1000
     V1TransactionsRes:
       type: object
       properties:
@@ -217,8 +227,8 @@ components:
             - 1
           description: >
             Transaction type:
-              * 0 - income
-              * 1 - expense
+              * 1 - income
+              * 2 - expense
         categoryId:
           type: integer
         amount:

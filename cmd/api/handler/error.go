@@ -17,17 +17,25 @@ func logError(r *http.Request, err error) {
 }
 
 func clientError(w http.ResponseWriter, r *http.Request, status int, message interface{}) {
-
-	// TODO OpenAPI定義
-	errContainer := map[string]interface{}{
+	container := map[string]interface{}{
 		"error": message,
 	}
 
-	err := encodeJSON(w, status, errContainer, nil)
+	err := encodeJSON(w, status, container, nil)
 	if err != nil {
 		logError(r, err)
 		w.WriteHeader(http.StatusInternalServerError)
 	}
+}
+
+func badRequestError(w http.ResponseWriter, r *http.Request, err error) {
+	status := http.StatusBadRequest
+	clientError(w, r, status, err.Error())
+}
+
+func unprocessableEntityError(w http.ResponseWriter, r *http.Request, errors map[string]string) {
+	status := http.StatusUnprocessableEntity
+	clientError(w, r, status, errors)
 }
 
 func unauthorizedError(w http.ResponseWriter, r *http.Request) {

@@ -1,17 +1,23 @@
 package repository
 
 type Repositories struct {
-	User UserRepository
+	Category    CategoryRepository
+	User        UserRepository
+	Transaction TransactionRepository
 }
 
 func NewRepositories() Repositories {
 	return Repositories{
-		User: &userRepository{},
+		Category:    &categoryRepository{},
+		User:        &userRepository{},
+		Transaction: &transactionRepository{},
 	}
 }
 
 func NewMockRepositories() Repositories {
 	return Repositories{
-		User: nil,
+		Category:    nil,
+		User:        nil,
+		Transaction: nil,
 	}
 }
