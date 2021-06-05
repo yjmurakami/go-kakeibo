@@ -10,10 +10,6 @@ import (
 // Generated from 'kakeibo.categories'.
 type categoryRepository struct{}
 
-func NewCategoryRepository() *categoryRepository {
-	return &categoryRepository{}
-}
-
 func (r *categoryRepository) SelectAll(db database.DB) ([]*entity.Category, error) {
 	query := `
 		SELECT id, type, name, created_at, modified_at

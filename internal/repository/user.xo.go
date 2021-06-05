@@ -10,10 +10,6 @@ import (
 // Generated from 'kakeibo.users'.
 type userRepository struct{}
 
-func NewUserRepository() *userRepository {
-	return &userRepository{}
-}
-
 func (r *userRepository) SelectAll(db database.DB) ([]*entity.User, error) {
 	query := `
 		SELECT id, login_id, login_password, created_at, modified_at

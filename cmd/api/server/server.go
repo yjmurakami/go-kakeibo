@@ -11,6 +11,7 @@ import (
 	"github.com/yjmurakami/go-kakeibo/cmd/api/service"
 	"github.com/yjmurakami/go-kakeibo/internal/clock"
 	"github.com/yjmurakami/go-kakeibo/internal/database"
+	"github.com/yjmurakami/go-kakeibo/internal/repository"
 )
 
 func Start() error {
@@ -35,18 +36,18 @@ func Start() error {
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 
 	hc := handlerConfig{
-		logger:    logger,
-		clock:     timer,
-		db:        db,
-		jwt:       jwt,
-		config:    cnf,
-		container: newContainer(),
+		logger: logger,
+		clock:  timer,
+		db:     db,
+		jwt:    jwt,
+		config: cnf,
+		repos:  repository.NewRepositories(),
 	}
 
 	mdl := handler.NewMiddlewareHandler(
 		service.NewMiddlewareService(
 			hc.db,
-			hc.container.userRepository,
+			hc.repos,
 		),
 		hc.jwt,
 		hc.clock,

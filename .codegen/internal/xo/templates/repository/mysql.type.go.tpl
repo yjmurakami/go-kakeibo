@@ -4,10 +4,6 @@
 // Generated from '{{ $table }}'.
 type {{ $lowerName }}Repository struct{}
 
-func New{{ .Name }}Repository() *{{ $lowerName }}Repository {
-	return &{{ $lowerName }}Repository{}
-}
-
 func (r *{{ $lowerName }}Repository) SelectAll(db database.DB) ([]*entity.{{ .Name }}, error) {
 	query := `
 		SELECT {{ colnames .Fields }}

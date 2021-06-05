@@ -11,19 +11,19 @@ import (
 )
 
 type middlewareService struct {
-	db             *sql.DB
-	userRepository repository.UserRepository
+	db    *sql.DB
+	repos repository.Repositories
 }
 
-func NewMiddlewareService(db *sql.DB, uRepo repository.UserRepository) *middlewareService {
+func NewMiddlewareService(db *sql.DB, repos repository.Repositories) *middlewareService {
 	return &middlewareService{
-		db:             db,
-		userRepository: uRepo,
+		db:    db,
+		repos: repos,
 	}
 }
 
 func (m *middlewareService) Authenticate(ctx context.Context, userID int) (*entity.User, error) {
-	u, err := m.userRepository.SelectByID(m.db, userID)
+	u, err := m.repos.User.SelectByID(m.db, userID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, core.ErrAuthenticationFailed

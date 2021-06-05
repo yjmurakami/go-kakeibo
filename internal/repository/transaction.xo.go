@@ -10,10 +10,6 @@ import (
 // Generated from 'kakeibo.transactions'.
 type transactionRepository struct{}
 
-func NewTransactionRepository() *transactionRepository {
-	return &transactionRepository{}
-}
-
 func (r *transactionRepository) SelectAll(db database.DB) ([]*entity.Transaction, error) {
 	query := `
 		SELECT id, user_id, date, category_id, amount, comment, created_at, modified_at

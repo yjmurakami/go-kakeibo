@@ -11,24 +11,12 @@ import (
 )
 
 type handlerConfig struct {
-	logger    *log.Logger
-	clock     clock.Clock
-	db        *sql.DB
-	jwt       handler.Jwt
-	config    *config
-	container container
-}
-
-type container struct {
-	userRepository repository.UserRepository
-}
-
-func newContainer() container {
-	c := container{
-		userRepository: repository.NewUserRepository(),
-	}
-
-	return c
+	logger *log.Logger
+	clock  clock.Clock
+	db     *sql.DB
+	jwt    handler.Jwt
+	config *config
+	repos  repository.Repositories
 }
 
 func initTransactionHandler(hc handlerConfig) handler.TransactionHandler {
