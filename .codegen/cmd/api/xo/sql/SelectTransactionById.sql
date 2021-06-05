@@ -1,11 +1,11 @@
 -- Options
 -1
 -- Type Name
-Transaction1
+SelectTransactionById
 -- Type Comment
 
 -- Func Name
-SelectTransaction
+SelectTransactionById
 -- Func Comment
 
 -- SQL

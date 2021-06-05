@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/yjmurakami/go-kakeibo/cmd/api/core"
 	"github.com/yjmurakami/go-kakeibo/internal/database"
 )
 
-// Generated from Transaction1.sql
+// Generated from SelectTransactionById.sql
 type Transaction struct {
 	ID           int       // id
 	UserID       int       // user_id
@@ -23,25 +24,8 @@ type Transaction struct {
 	CategoryName string    // category_name
 }
 
+// Generated from SelectTransactionById.sql
 func SelectTransactionById(db database.DB, id int) (*Transaction, error) {
-	query := fmt.Sprintf(`
-		%s
-		WHERE t.id = ?
-	`, getTransactionQuery())
-
-	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
-	defer cancel()
-
-	d := Transaction{}
-	err := db.QueryRowContext(ctx, query, id).Scan(&d.ID, &d.UserID, &d.Date, &d.Amount, &d.Note, &d.CreatedAt, &d.ModifiedAt, &d.Version, &d.CategoryID, &d.CategoryType, &d.CategoryName)
-	if err != nil {
-		return nil, err
-	}
-	return &d, nil
-}
-
-// Generated from Transaction1.sql
-func getTransactionQuery() string {
 	query := `
 		SELECT
 		  t.id
@@ -59,7 +43,18 @@ func getTransactionQuery() string {
 		  kakeibo.transactions t
 		  INNER JOIN kakeibo.categories c 
 		    ON  t.category_id = c.id
+		WHERE
+		  t.id = ?
+		
 	`
 
-	return query
+	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
+	defer cancel()
+
+	d := SelectTransactionById{}
+	err := db.QueryRowContext(ctx, query, id).Scan(&d.ID, &d.UserID, &d.Date, &d.Amount, &d.Note, &d.CreatedAt, &d.ModifiedAt, &d.Version, &d.CategoryID, &d.CategoryType, &d.CategoryName)
+	if err != nil {
+		return nil, err
+	}
+	return &d, nil
 }
