@@ -13,4 +13,5 @@ type User struct {
 	LoginPassword string    // login_password
 	CreatedAt     time.Time // created_at
 	ModifiedAt    time.Time // modified_at
+	Version       int       // version
 }

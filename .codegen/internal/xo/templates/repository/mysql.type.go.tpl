@@ -39,26 +39,26 @@ func (r *{{ $lowerName }}Repository) Insert(db database.DB, e *entity.{{ .Name }
 {{ if .Table.ManualPk -}}
 	query := `
 		INSERT INTO {{ $table }} (
-			{{ colnames .Fields }}
+			{{ colnames .Fields "Version" }}
 		) VALUES (
-			{{ colvals .Fields }}
+			{{ colvals .Fields "Version" }}
 		)
 	`
 
-	_, err := db.Exec(query, {{ fieldnames .Fields "e" }})
+	_, err := db.Exec(query, {{ fieldnames .Fields "e" "Version" }})
 	if err != nil {
 		return err
 	}
 {{ else -}}
 	query := `
 		INSERT INTO {{ $table }} (
-			{{ colnames .Fields .PrimaryKey.Name }}
+			{{ colnames .Fields .PrimaryKey.Name "Version" }}
 		) VALUES (
-			{{ colvals .Fields .PrimaryKey.Name }}
+			{{ colvals .Fields .PrimaryKey.Name "Version" }}
 		)
 	`
 
-	res, err := db.Exec(query, {{ fieldnames .Fields "e" .PrimaryKey.Name }})
+	res, err := db.Exec(query, {{ fieldnames .Fields "e" .PrimaryKey.Name "Version" }})
 	if err != nil {
 		return err
 	}
@@ -95,15 +95,15 @@ func (r *{{ $lowerName }}Repository) Update(db database.DB, e *entity.{{ .Name }
 		return sql.ErrNoRows
 	}
 
-	return err
+	return nil
 {{- else -}}
 	query := `
 		UPDATE {{ $table }} SET
-			{{ colnamesquery .Fields ", " .PrimaryKey.Name }}
-		WHERE {{ colname .PrimaryKey.Col }} = ?
+			{{ colnamesquery .Fields ", " .PrimaryKey.Name "Version" }}, version = version + 1
+		WHERE {{ colname .PrimaryKey.Col }} = ? AND version = ?
 	`
 
-	result, err := db.Exec(query, {{ fieldnames .Fields "e" .PrimaryKey.Name }}, e.{{ .PrimaryKey.Name }})
+	result, err := db.Exec(query, {{ fieldnames .Fields "e" .PrimaryKey.Name "Version" }}, e.{{ .PrimaryKey.Name }}, e.Version)
 	if err != nil {
 		return err
 	}
@@ -116,7 +116,8 @@ func (r *{{ $lowerName }}Repository) Update(db database.DB, e *entity.{{ .Name }
 		return sql.ErrNoRows
 	}
 
-	return err
+	e.Version += 1
+	return nil
 {{- end }}
 }
 
@@ -162,6 +163,6 @@ func (r *{{ $lowerName }}Repository) Delete(db database.DB, e *entity.{{ .Name }
 		return sql.ErrNoRows
 	}
 {{ end -}}
-	return err
+	return nil
 }
 {{- end }}

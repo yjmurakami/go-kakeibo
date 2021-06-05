@@ -14,7 +14,7 @@ type categoryRepository struct{}
 
 func (r *categoryRepository) SelectAll(db database.DB) ([]*entity.Category, error) {
 	query := `
-		SELECT id, type, name, created_at, modified_at
+		SELECT id, type, name, created_at, modified_at, version
 		FROM kakeibo.categories
 		ORDER BY id
 	`
@@ -28,7 +28,7 @@ func (r *categoryRepository) SelectAll(db database.DB) ([]*entity.Category, erro
 	s := []*entity.Category{}
 	for rows.Next() {
 		e := entity.Category{}
-		err = rows.Scan(&e.ID, &e.Type, &e.Name, &e.CreatedAt, &e.ModifiedAt)
+		err = rows.Scan(&e.ID, &e.Type, &e.Name, &e.CreatedAt, &e.ModifiedAt, &e.Version)
 		if err != nil {
 			return nil, err
 		}
@@ -68,11 +68,11 @@ func (r *categoryRepository) Insert(db database.DB, e *entity.Category) error {
 func (r *categoryRepository) Update(db database.DB, e *entity.Category) error {
 	query := `
 		UPDATE kakeibo.categories SET
-			type = ?, name = ?, created_at = ?, modified_at = ?
-		WHERE id = ?
+			type = ?, name = ?, created_at = ?, modified_at = ?, version = version + 1
+		WHERE id = ? AND version = ?
 	`
 
-	result, err := db.Exec(query, e.Type, e.Name, e.CreatedAt, e.ModifiedAt, e.ID)
+	result, err := db.Exec(query, e.Type, e.Name, e.CreatedAt, e.ModifiedAt, e.ID, e.Version)
 	if err != nil {
 		return err
 	}
@@ -85,7 +85,8 @@ func (r *categoryRepository) Update(db database.DB, e *entity.Category) error {
 		return sql.ErrNoRows
 	}
 
-	return err
+	e.Version += 1
+	return nil
 }
 
 func (r *categoryRepository) Delete(db database.DB, e *entity.Category) error {
@@ -106,18 +107,18 @@ func (r *categoryRepository) Delete(db database.DB, e *entity.Category) error {
 	if rowsAffected == 0 {
 		return sql.ErrNoRows
 	}
-	return err
+	return nil
 }
 
 // Generated from index 'categories_id_pkey'.
 func (r *categoryRepository) SelectByID(db database.DB, id int) (*entity.Category, error) {
 	query := `
-		SELECT id, type, name, created_at, modified_at
+		SELECT id, type, name, created_at, modified_at, version
 		FROM kakeibo.categories
 		WHERE id = ?
 	`
 	e := entity.Category{}
-	err := db.QueryRow(query, id).Scan(&e.ID, &e.Type, &e.Name, &e.CreatedAt, &e.ModifiedAt)
+	err := db.QueryRow(query, id).Scan(&e.ID, &e.Type, &e.Name, &e.CreatedAt, &e.ModifiedAt, &e.Version)
 	if err != nil {
 		return nil, err
 	}
@@ -127,12 +128,12 @@ func (r *categoryRepository) SelectByID(db database.DB, id int) (*entity.Categor
 // Generated from index 'idx_categories_type_name'.
 func (r *categoryRepository) SelectByTypeName(db database.DB, typ int, name string) (*entity.Category, error) {
 	query := `
-		SELECT id, type, name, created_at, modified_at
+		SELECT id, type, name, created_at, modified_at, version
 		FROM kakeibo.categories
 		WHERE type = ? AND name = ?
 	`
 	e := entity.Category{}
-	err := db.QueryRow(query, typ, name).Scan(&e.ID, &e.Type, &e.Name, &e.CreatedAt, &e.ModifiedAt)
+	err := db.QueryRow(query, typ, name).Scan(&e.ID, &e.Type, &e.Name, &e.CreatedAt, &e.ModifiedAt, &e.Version)
 	if err != nil {
 		return nil, err
 	}

@@ -14,7 +14,7 @@ type userRepository struct{}
 
 func (r *userRepository) SelectAll(db database.DB) ([]*entity.User, error) {
 	query := `
-		SELECT id, login_id, login_password, created_at, modified_at
+		SELECT id, login_id, login_password, created_at, modified_at, version
 		FROM kakeibo.users
 		ORDER BY id
 	`
@@ -28,7 +28,7 @@ func (r *userRepository) SelectAll(db database.DB) ([]*entity.User, error) {
 	s := []*entity.User{}
 	for rows.Next() {
 		e := entity.User{}
-		err = rows.Scan(&e.ID, &e.LoginID, &e.LoginPassword, &e.CreatedAt, &e.ModifiedAt)
+		err = rows.Scan(&e.ID, &e.LoginID, &e.LoginPassword, &e.CreatedAt, &e.ModifiedAt, &e.Version)
 		if err != nil {
 			return nil, err
 		}
@@ -68,11 +68,11 @@ func (r *userRepository) Insert(db database.DB, e *entity.User) error {
 func (r *userRepository) Update(db database.DB, e *entity.User) error {
 	query := `
 		UPDATE kakeibo.users SET
-			login_id = ?, login_password = ?, created_at = ?, modified_at = ?
-		WHERE id = ?
+			login_id = ?, login_password = ?, created_at = ?, modified_at = ?, version = version + 1
+		WHERE id = ? AND version = ?
 	`
 
-	result, err := db.Exec(query, e.LoginID, e.LoginPassword, e.CreatedAt, e.ModifiedAt, e.ID)
+	result, err := db.Exec(query, e.LoginID, e.LoginPassword, e.CreatedAt, e.ModifiedAt, e.ID, e.Version)
 	if err != nil {
 		return err
 	}
@@ -85,7 +85,8 @@ func (r *userRepository) Update(db database.DB, e *entity.User) error {
 		return sql.ErrNoRows
 	}
 
-	return err
+	e.Version += 1
+	return nil
 }
 
 func (r *userRepository) Delete(db database.DB, e *entity.User) error {
@@ -106,18 +107,18 @@ func (r *userRepository) Delete(db database.DB, e *entity.User) error {
 	if rowsAffected == 0 {
 		return sql.ErrNoRows
 	}
-	return err
+	return nil
 }
 
 // Generated from index 'login_id_UNIQUE'.
 func (r *userRepository) SelectByLoginID(db database.DB, loginID string) (*entity.User, error) {
 	query := `
-		SELECT id, login_id, login_password, created_at, modified_at
+		SELECT id, login_id, login_password, created_at, modified_at, version
 		FROM kakeibo.users
 		WHERE login_id = ?
 	`
 	e := entity.User{}
-	err := db.QueryRow(query, loginID).Scan(&e.ID, &e.LoginID, &e.LoginPassword, &e.CreatedAt, &e.ModifiedAt)
+	err := db.QueryRow(query, loginID).Scan(&e.ID, &e.LoginID, &e.LoginPassword, &e.CreatedAt, &e.ModifiedAt, &e.Version)
 	if err != nil {
 		return nil, err
 	}
@@ -127,12 +128,12 @@ func (r *userRepository) SelectByLoginID(db database.DB, loginID string) (*entit
 // Generated from index 'users_id_pkey'.
 func (r *userRepository) SelectByID(db database.DB, id int) (*entity.User, error) {
 	query := `
-		SELECT id, login_id, login_password, created_at, modified_at
+		SELECT id, login_id, login_password, created_at, modified_at, version
 		FROM kakeibo.users
 		WHERE id = ?
 	`
 	e := entity.User{}
-	err := db.QueryRow(query, id).Scan(&e.ID, &e.LoginID, &e.LoginPassword, &e.CreatedAt, &e.ModifiedAt)
+	err := db.QueryRow(query, id).Scan(&e.ID, &e.LoginID, &e.LoginPassword, &e.CreatedAt, &e.ModifiedAt, &e.Version)
 	if err != nil {
 		return nil, err
 	}

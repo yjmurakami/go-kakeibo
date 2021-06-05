@@ -13,4 +13,5 @@ type Category struct {
 	Name       string    // name
 	CreatedAt  time.Time // created_at
 	ModifiedAt time.Time // modified_at
+	Version    int       // version
 }

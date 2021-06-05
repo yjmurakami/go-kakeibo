@@ -30,6 +30,7 @@ CREATE TABLE `categories` (
   `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` datetime NOT NULL,
   `modified_at` datetime NOT NULL,
+  `version` int(10) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_categories_type_name` (`type`,`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -51,6 +52,7 @@ CREATE TABLE `transactions` (
   `note` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` datetime NOT NULL,
   `modified_at` datetime NOT NULL,
+  `version` int(10) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `category_id` (`category_id`),
@@ -72,6 +74,7 @@ CREATE TABLE `users` (
   `login_password` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` datetime NOT NULL,
   `modified_at` datetime NOT NULL,
+  `version` int(10) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `login_id_UNIQUE` (`login_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

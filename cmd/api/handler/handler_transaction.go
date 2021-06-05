@@ -162,6 +162,8 @@ func (h *transactionHandler) V1TransactionsTransactionIdPatch() http.HandlerFunc
 		if err != nil {
 			if errors.Is(err, core.ErrNoResource) {
 				NotFoundError(w, r)
+			} else if errors.Is(err, core.ErrEditConflict) {
+				conflictError(w, r)
 			} else {
 				serverError(w, r, err)
 			}

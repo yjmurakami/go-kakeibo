@@ -165,7 +165,7 @@ func (s *transactionService) V1TransactionsTransactionIdPatch(ctx context.Contex
 	err = s.repos.Transaction.Update(s.db, transaction)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, core.ErrNoResource
+			return nil, core.ErrEditConflict
 		}
 		return nil, err
 	}

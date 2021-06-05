@@ -5,8 +5,9 @@ import (
 )
 
 var (
-	ErrNoResource           = errors.New("resource does not exist")
 	ErrAuthenticationFailed = errors.New("authentication failed")
+	ErrEditConflict         = errors.New("edit conflict")
+	ErrNoResource           = errors.New("resource does not exist")
 )
 
 type ErrInvalidParameter struct {

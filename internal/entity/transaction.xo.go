@@ -16,4 +16,5 @@ type Transaction struct {
 	Note       string    // note
 	CreatedAt  time.Time // created_at
 	ModifiedAt time.Time // modified_at
+	Version    int       // version
 }
