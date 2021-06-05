@@ -5,18 +5,18 @@ package handler
 
 import "net/http"
 
-type CategoryHandler interface {
+type CategoryHandler interface { 
 	V1CategoriesGet() http.HandlerFunc
 }
 
-type SystemHandler interface {
+type SystemHandler interface { 
 	V1HealthGet() http.HandlerFunc
 }
 
-type TransactionHandler interface {
+type TransactionHandler interface { 
 	V1TransactionsGet() http.HandlerFunc
 	V1TransactionsPost() http.HandlerFunc
 	V1TransactionsTransactionIdDelete() http.HandlerFunc
 	V1TransactionsTransactionIdGet() http.HandlerFunc
-	V1TransactionsTransactionIdPut() http.HandlerFunc
+	V1TransactionsTransactionIdPatch() http.HandlerFunc
 }

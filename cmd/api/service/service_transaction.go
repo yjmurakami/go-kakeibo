@@ -120,7 +120,7 @@ func (s *transactionService) V1TransactionsTransactionIdGet(ctx context.Context,
 	return oaRes, nil
 }
 
-func (s *transactionService) V1TransactionsTransactionIdPut(ctx context.Context, transactionId int, oaReq *openapi.V1TransactionsTransactionIdPutReq) (*openapi.V1TransactionsRes, error) {
+func (s *transactionService) V1TransactionsTransactionIdPatch(ctx context.Context, transactionId int, oaReq *openapi.V1TransactionsTransactionIdPatchReq) (*openapi.V1TransactionsRes, error) {
 	transaction, err := s.repos.Transaction.SelectByID(s.db, transactionId)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -129,28 +129,37 @@ func (s *transactionService) V1TransactionsTransactionIdPut(ctx context.Context,
 		return nil, err
 	}
 
-	category, err := s.repos.Category.SelectByID(s.db, oaReq.CategoryId)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, core.ErrInvalidParameter{
-				Key:     "categoryId",
-				Message: "the value is invalid",
-			}
-		}
-		return nil, err
-	}
-
-	dt, err := time.Parse(openapi.DateFormat, oaReq.Date)
-	if err != nil {
-		return nil, err
-	}
-
 	// TODO 権限チェック
 
-	transaction.Date = dt
-	transaction.CategoryID = category.ID
-	transaction.Amount = oaReq.Amount
-	transaction.Note = oaReq.Note
+	if oaReq.Date != nil {
+		dt, err := time.Parse(openapi.DateFormat, *oaReq.Date)
+		if err != nil {
+			return nil, err
+		}
+
+		transaction.Date = dt
+	}
+
+	if oaReq.CategoryId != nil {
+		category, err := s.repos.Category.SelectByID(s.db, *oaReq.CategoryId)
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return nil, core.ErrInvalidParameter{
+					Key:     "categoryId",
+					Message: "the value is invalid",
+				}
+			}
+			return nil, err
+		}
+
+		transaction.CategoryID = category.ID
+	}
+	if oaReq.Amount != nil {
+		transaction.Amount = *oaReq.Amount
+	}
+	if oaReq.Note != nil {
+		transaction.Note = *oaReq.Note
+	}
 	transaction.ModifiedAt = s.clock.Now()
 
 	err = s.repos.Transaction.Update(s.db, transaction)
@@ -164,7 +173,7 @@ func (s *transactionService) V1TransactionsTransactionIdPut(ctx context.Context,
 	oaRes := &openapi.V1TransactionsRes{
 		Id:         transaction.ID,
 		Date:       transaction.Date.Format(openapi.DateFormat),
-		Type:       category.Type,
+		Type:       0, // TODO
 		CategoryId: transaction.CategoryID,
 		Amount:     transaction.Amount,
 		Note:       transaction.Note,

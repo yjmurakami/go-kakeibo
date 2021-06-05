@@ -20,5 +20,5 @@ type TransactionService interface {
 	V1TransactionsPost(ctx context.Context, oaReq *openapi.V1TransactionsPostReq) (*openapi.V1TransactionsRes, error)
 	V1TransactionsTransactionIdDelete(ctx context.Context, transactionId int) error
 	V1TransactionsTransactionIdGet(ctx context.Context, transactionId int) (*openapi.V1TransactionsRes, error)
-	V1TransactionsTransactionIdPut(ctx context.Context, transactionId int, oaReq *openapi.V1TransactionsTransactionIdPutReq) (*openapi.V1TransactionsRes, error)
+	V1TransactionsTransactionIdPatch(ctx context.Context, transactionId int, oaReq *openapi.V1TransactionsTransactionIdPatchReq) (*openapi.V1TransactionsRes, error)
 }

@@ -133,7 +133,7 @@ func (h *transactionHandler) V1TransactionsTransactionIdGet() http.HandlerFunc {
 	}
 }
 
-func (h *transactionHandler) V1TransactionsTransactionIdPut() http.HandlerFunc {
+func (h *transactionHandler) V1TransactionsTransactionIdPatch() http.HandlerFunc {
 	type response struct {
 		Data *openapi.V1TransactionsRes `json:"data"`
 	}
@@ -144,7 +144,7 @@ func (h *transactionHandler) V1TransactionsTransactionIdPut() http.HandlerFunc {
 			return
 		}
 
-		oaReq := &openapi.V1TransactionsTransactionIdPutReq{}
+		oaReq := &openapi.V1TransactionsTransactionIdPatchReq{}
 		err = decodeJSON(w, r, oaReq)
 		if err != nil {
 			badRequestError(w, r, err)
@@ -158,7 +158,7 @@ func (h *transactionHandler) V1TransactionsTransactionIdPut() http.HandlerFunc {
 			return
 		}
 
-		oaRes, err := h.service.V1TransactionsTransactionIdPut(r.Context(), id, oaReq)
+		oaRes, err := h.service.V1TransactionsTransactionIdPatch(r.Context(), id, oaReq)
 		if err != nil {
 			if errors.Is(err, core.ErrNoResource) {
 				NotFoundError(w, r)

@@ -86,7 +86,7 @@ paths:
                 properties:
                   data:
                     $ref: "#/components/schemas/V1TransactionsRes"
-    put:
+    patch:
       tags:
         - "Transaction"
       requestBody:
@@ -94,7 +94,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/V1TransactionsTransactionIdPutReq"
+              $ref: "#/components/schemas/V1TransactionsTransactionIdPatchReq"
       responses:
         "200":
           description: ""
@@ -178,7 +178,7 @@ components:
           type: string
           maxLength: 1000
           x-go-validate: max=1000
-    V1TransactionsTransactionIdPutReq:
+    V1TransactionsTransactionIdPatchReq:
       type: object
       required:
         - "date"
@@ -188,10 +188,12 @@ components:
       properties:
         date:
           type: string
+          nullable: true
           format: date
-          x-go-validate: required,datetime=2006-01-02
+          x-go-validate: omitempty,datetime=2006-01-02
         type:
           type: integer
+          nullable: true
           enum:
             - 0
             - 1
@@ -199,19 +201,22 @@ components:
             Transaction type:
               * 1 - income
               * 2 - expense
-          x-go-validate: required,oneof=1 2
+          x-go-validate: omitempty,oneof=1 2
         categoryId:
           type: integer
-          x-go-validate: min=1,max=999999999
+          nullable: true
+          x-go-validate: omitempty,min=1,max=999999999
         amount:
           type: integer
+          nullable: true
           minimum: 1
           maximum: 999999999
-          x-go-validate: min=1,max=999999999
+          x-go-validate: omitempty,min=1,max=999999999
         note:
           type: string
+          nullable: true
           maxLength: 1000
-          x-go-validate: max=1000
+          x-go-validate: omitempty,max=1000
     V1TransactionsRes:
       type: object
       properties:
