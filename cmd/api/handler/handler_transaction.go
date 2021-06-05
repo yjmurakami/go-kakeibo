@@ -46,9 +46,9 @@ func (h *transactionHandler) V1TransactionsPost() http.HandlerFunc {
 			if errors.As(err, &errInvalidParameter) {
 				v.AddError(errInvalidParameter.Key, errInvalidParameter.Message)
 				unprocessableEntityError(w, r, v.Errors())
-				return
+			} else {
+				serverError(w, r, err)
 			}
-			serverError(w, r, err)
 			return
 		}
 
@@ -74,7 +74,35 @@ func (h *transactionHandler) V1TransactionsTransactionIdDelete() http.HandlerFun
 }
 
 func (h *transactionHandler) V1TransactionsTransactionIdGet() http.HandlerFunc {
-	panic("not implemented") // TODO: Implement
+	type response struct {
+		Data *openapi.V1TransactionsRes `json:"data"`
+	}
+	return func(w http.ResponseWriter, r *http.Request) {
+		id, err := getParamId(r, "transactionId")
+		if err != nil {
+			NotFoundError(w, r)
+			return
+		}
+
+		oaRes, err := h.service.V1TransactionsTransactionIdGet(r.Context(), id)
+		if err != nil {
+			if errors.Is(err, core.ErrNoResource) {
+				NotFoundError(w, r)
+			} else {
+				serverError(w, r, err)
+			}
+			return
+		}
+
+		res := response{
+			Data: oaRes,
+		}
+		err = encodeJSON(w, http.StatusOK, res, nil)
+		if err != nil {
+			serverError(w, r, err)
+			return
+		}
+	}
 }
 
 func (h *transactionHandler) V1TransactionsTransactionIdPut() http.HandlerFunc {

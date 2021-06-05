@@ -80,7 +80,26 @@ func (s *transactionService) V1TransactionsTransactionIdDelete(ctx context.Conte
 }
 
 func (s *transactionService) V1TransactionsTransactionIdGet(ctx context.Context, transactionId int) (*openapi.V1TransactionsRes, error) {
-	panic("not implemented") // TODO: Implement
+	transaction, err := s.repos.Transaction.SelectByID(s.db, transactionId)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, core.ErrNoResource
+		}
+		return nil, err
+	}
+
+	// TODO ログインユーザーのデータでなければエラー
+
+	// TODO 共通化
+	oaRes := &openapi.V1TransactionsRes{
+		Id:         transaction.ID,
+		Date:       transaction.Date.Format(openapi.DateFormat),
+		Type:       0, // TODO SQL JOIN
+		CategoryId: transaction.CategoryID,
+		Amount:     transaction.Amount,
+		Note:       transaction.Note,
+	}
+	return oaRes, nil
 }
 
 func (s *transactionService) V1TransactionsTransactionIdPut(ctx context.Context, transactionId int, oaReq *openapi.V1TransactionsTransactionIdPutReq) (*openapi.V1TransactionsRes, error) {

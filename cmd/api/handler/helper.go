@@ -11,6 +11,7 @@ import (
 	"time"
 
 	jwtgo "github.com/dgrijalva/jwt-go"
+	"github.com/gorilla/mux"
 	"github.com/yjmurakami/go-kakeibo/internal/clock"
 )
 
@@ -199,4 +200,15 @@ func encodeJSON(w http.ResponseWriter, status int, src interface{}, header http.
 	_, err = w.Write(js)
 
 	return err
+}
+
+// URL parameter
+
+func getParamId(r *http.Request, key string) (int, error) {
+	id, err := strconv.Atoi(mux.Vars(r)[key])
+	if err != nil || id < 1 {
+		return 0, fmt.Errorf("the id is invalid")
+	}
+
+	return id, nil
 }
