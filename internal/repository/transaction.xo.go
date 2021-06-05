@@ -3,6 +3,7 @@
 package repository
 
 import (
+	"context"
 	"database/sql"
 
 	"github.com/yjmurakami/go-kakeibo/internal/database"
@@ -19,7 +20,10 @@ func (r *transactionRepository) SelectAll(db database.DB) ([]*entity.Transaction
 		ORDER BY id
 	`
 
-	rows, err := db.Query(query)
+	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	defer cancel()
+
+	rows, err := db.QueryContext(ctx, query)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +55,10 @@ func (r *transactionRepository) Insert(db database.DB, e *entity.Transaction) er
 		)
 	`
 
-	res, err := db.Exec(query, e.UserID, e.Date, e.CategoryID, e.Amount, e.Note, e.CreatedAt, e.ModifiedAt)
+	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	defer cancel()
+
+	res, err := db.ExecContext(ctx, query, e.UserID, e.Date, e.CategoryID, e.Amount, e.Note, e.CreatedAt, e.ModifiedAt)
 	if err != nil {
 		return err
 	}
@@ -72,7 +79,10 @@ func (r *transactionRepository) Update(db database.DB, e *entity.Transaction) er
 		WHERE id = ? AND version = ?
 	`
 
-	result, err := db.Exec(query, e.UserID, e.Date, e.CategoryID, e.Amount, e.Note, e.CreatedAt, e.ModifiedAt, e.ID, e.Version)
+	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	defer cancel()
+
+	result, err := db.ExecContext(ctx, query, e.UserID, e.Date, e.CategoryID, e.Amount, e.Note, e.CreatedAt, e.ModifiedAt, e.ID, e.Version)
 	if err != nil {
 		return err
 	}
@@ -95,7 +105,10 @@ func (r *transactionRepository) Delete(db database.DB, e *entity.Transaction) er
 		WHERE id = ?
 	`
 
-	result, err := db.Exec(query, e.ID)
+	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	defer cancel()
+
+	result, err := db.ExecContext(ctx, query, e.ID)
 	if err != nil {
 		return err
 	}
@@ -118,7 +131,10 @@ func (r *transactionRepository) SelectByCategoryID(db database.DB, categoryID in
 		WHERE category_id = ?
 		ORDER BY id
 	`
-	rows, err := db.Query(query, categoryID)
+
+	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	defer cancel()
+	rows, err := db.QueryContext(ctx, query, categoryID)
 	if err != nil {
 		return nil, err
 	}
@@ -148,8 +164,11 @@ func (r *transactionRepository) SelectByID(db database.DB, id int) (*entity.Tran
 		FROM kakeibo.transactions
 		WHERE id = ?
 	`
+
+	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	defer cancel()
 	e := entity.Transaction{}
-	err := db.QueryRow(query, id).Scan(&e.ID, &e.UserID, &e.Date, &e.CategoryID, &e.Amount, &e.Note, &e.CreatedAt, &e.ModifiedAt, &e.Version)
+	err := db.QueryRowContext(ctx, query, id).Scan(&e.ID, &e.UserID, &e.Date, &e.CategoryID, &e.Amount, &e.Note, &e.CreatedAt, &e.ModifiedAt, &e.Version)
 	if err != nil {
 		return nil, err
 	}
@@ -164,7 +183,10 @@ func (r *transactionRepository) SelectByUserID(db database.DB, userID int) ([]*e
 		WHERE user_id = ?
 		ORDER BY id
 	`
-	rows, err := db.Query(query, userID)
+
+	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	defer cancel()
+	rows, err := db.QueryContext(ctx, query, userID)
 	if err != nil {
 		return nil, err
 	}

@@ -11,15 +11,18 @@ func (r *{{ $lowerName }}Repository) Select{{ .FuncName }}(db database.DB{{ gopa
 		ORDER BY {{ colnames .Type.PrimaryKeyFields }}{{ end }}
 	`
 
+	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	defer cancel()
+
 {{- if .Index.IsUnique }}
 	e := entity.{{ .Type.Name }}{}
-	err := db.QueryRow(query{{ goparamlist .Fields true false }}).Scan({{ fieldnames .Type.Fields "&e" }})
+	err := db.QueryRowContext(ctx, query{{ goparamlist .Fields true false }}).Scan({{ fieldnames .Type.Fields "&e" }})
 	if err != nil {
 		return nil, err
 	}
 	return &e, nil
 {{- else }}
-	rows, err := db.Query(query{{ goparamlist .Fields true false }})
+	rows, err := db.QueryContext(ctx, query{{ goparamlist .Fields true false }})
 	if err != nil {
 		return nil, err
 	}

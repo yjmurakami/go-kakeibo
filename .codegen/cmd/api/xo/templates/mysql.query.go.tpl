@@ -6,16 +6,19 @@ func {{ .Name }} (db database.DB{{ range .QueryUniqueParams }}, {{ .Name }} {{ .
 		{{- range $i, $l := .Query }}
 		{{ $l }}{{ end }}
 	`
-	
-{{- if .OnlyOne }}
+
+	ctx, cancel := context.WithTimeout(context.Background(), repository.QueryTimeout)
+	defer cancel()
+
+{{ if .OnlyOne }}
 	d := {{ .Type.Name }}{}
-	err := db.QueryRow(query{{ range .QueryParams }}, {{ .Name }}{{ end }}).Scan({{ fieldnames .Type.Fields "&d" }})
+	err := db.QueryRowContext(ctx, query{{ range .QueryParams }}, {{ .Name }}{{ end }}).Scan({{ fieldnames .Type.Fields "&d" }})
 	if err != nil {
 		return nil, err
 	}
 	return &d, nil
 {{- else }}
-	rows, err := db.Query(query{{ range .QueryParams }}, {{ .Name }}{{ end }})
+	rows, err := db.QueryContext(ctx, query{{ range .QueryParams }}, {{ .Name }}{{ end }})
 	if err != nil {
 		return nil, err
 	}

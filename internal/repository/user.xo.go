@@ -3,6 +3,7 @@
 package repository
 
 import (
+	"context"
 	"database/sql"
 
 	"github.com/yjmurakami/go-kakeibo/internal/database"
@@ -19,7 +20,10 @@ func (r *userRepository) SelectAll(db database.DB) ([]*entity.User, error) {
 		ORDER BY id
 	`
 
-	rows, err := db.Query(query)
+	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	defer cancel()
+
+	rows, err := db.QueryContext(ctx, query)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +55,10 @@ func (r *userRepository) Insert(db database.DB, e *entity.User) error {
 		)
 	`
 
-	res, err := db.Exec(query, e.LoginID, e.LoginPassword, e.CreatedAt, e.ModifiedAt)
+	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	defer cancel()
+
+	res, err := db.ExecContext(ctx, query, e.LoginID, e.LoginPassword, e.CreatedAt, e.ModifiedAt)
 	if err != nil {
 		return err
 	}
@@ -72,7 +79,10 @@ func (r *userRepository) Update(db database.DB, e *entity.User) error {
 		WHERE id = ? AND version = ?
 	`
 
-	result, err := db.Exec(query, e.LoginID, e.LoginPassword, e.CreatedAt, e.ModifiedAt, e.ID, e.Version)
+	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	defer cancel()
+
+	result, err := db.ExecContext(ctx, query, e.LoginID, e.LoginPassword, e.CreatedAt, e.ModifiedAt, e.ID, e.Version)
 	if err != nil {
 		return err
 	}
@@ -95,7 +105,10 @@ func (r *userRepository) Delete(db database.DB, e *entity.User) error {
 		WHERE id = ?
 	`
 
-	result, err := db.Exec(query, e.ID)
+	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	defer cancel()
+
+	result, err := db.ExecContext(ctx, query, e.ID)
 	if err != nil {
 		return err
 	}
@@ -117,8 +130,11 @@ func (r *userRepository) SelectByLoginID(db database.DB, loginID string) (*entit
 		FROM kakeibo.users
 		WHERE login_id = ?
 	`
+
+	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	defer cancel()
 	e := entity.User{}
-	err := db.QueryRow(query, loginID).Scan(&e.ID, &e.LoginID, &e.LoginPassword, &e.CreatedAt, &e.ModifiedAt, &e.Version)
+	err := db.QueryRowContext(ctx, query, loginID).Scan(&e.ID, &e.LoginID, &e.LoginPassword, &e.CreatedAt, &e.ModifiedAt, &e.Version)
 	if err != nil {
 		return nil, err
 	}
@@ -132,8 +148,11 @@ func (r *userRepository) SelectByID(db database.DB, id int) (*entity.User, error
 		FROM kakeibo.users
 		WHERE id = ?
 	`
+
+	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	defer cancel()
 	e := entity.User{}
-	err := db.QueryRow(query, id).Scan(&e.ID, &e.LoginID, &e.LoginPassword, &e.CreatedAt, &e.ModifiedAt, &e.Version)
+	err := db.QueryRowContext(ctx, query, id).Scan(&e.ID, &e.LoginID, &e.LoginPassword, &e.CreatedAt, &e.ModifiedAt, &e.Version)
 	if err != nil {
 		return nil, err
 	}

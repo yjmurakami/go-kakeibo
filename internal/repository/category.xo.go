@@ -3,6 +3,7 @@
 package repository
 
 import (
+	"context"
 	"database/sql"
 
 	"github.com/yjmurakami/go-kakeibo/internal/database"
@@ -19,7 +20,10 @@ func (r *categoryRepository) SelectAll(db database.DB) ([]*entity.Category, erro
 		ORDER BY id
 	`
 
-	rows, err := db.Query(query)
+	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	defer cancel()
+
+	rows, err := db.QueryContext(ctx, query)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +55,10 @@ func (r *categoryRepository) Insert(db database.DB, e *entity.Category) error {
 		)
 	`
 
-	res, err := db.Exec(query, e.Type, e.Name, e.CreatedAt, e.ModifiedAt)
+	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	defer cancel()
+
+	res, err := db.ExecContext(ctx, query, e.Type, e.Name, e.CreatedAt, e.ModifiedAt)
 	if err != nil {
 		return err
 	}
@@ -72,7 +79,10 @@ func (r *categoryRepository) Update(db database.DB, e *entity.Category) error {
 		WHERE id = ? AND version = ?
 	`
 
-	result, err := db.Exec(query, e.Type, e.Name, e.CreatedAt, e.ModifiedAt, e.ID, e.Version)
+	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	defer cancel()
+
+	result, err := db.ExecContext(ctx, query, e.Type, e.Name, e.CreatedAt, e.ModifiedAt, e.ID, e.Version)
 	if err != nil {
 		return err
 	}
@@ -95,7 +105,10 @@ func (r *categoryRepository) Delete(db database.DB, e *entity.Category) error {
 		WHERE id = ?
 	`
 
-	result, err := db.Exec(query, e.ID)
+	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	defer cancel()
+
+	result, err := db.ExecContext(ctx, query, e.ID)
 	if err != nil {
 		return err
 	}
@@ -117,8 +130,11 @@ func (r *categoryRepository) SelectByID(db database.DB, id int) (*entity.Categor
 		FROM kakeibo.categories
 		WHERE id = ?
 	`
+
+	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	defer cancel()
 	e := entity.Category{}
-	err := db.QueryRow(query, id).Scan(&e.ID, &e.Type, &e.Name, &e.CreatedAt, &e.ModifiedAt, &e.Version)
+	err := db.QueryRowContext(ctx, query, id).Scan(&e.ID, &e.Type, &e.Name, &e.CreatedAt, &e.ModifiedAt, &e.Version)
 	if err != nil {
 		return nil, err
 	}
@@ -132,8 +148,11 @@ func (r *categoryRepository) SelectByTypeName(db database.DB, typ int, name stri
 		FROM kakeibo.categories
 		WHERE type = ? AND name = ?
 	`
+
+	ctx, cancel := context.WithTimeout(context.Background(), queryTimeout)
+	defer cancel()
 	e := entity.Category{}
-	err := db.QueryRow(query, typ, name).Scan(&e.ID, &e.Type, &e.Name, &e.CreatedAt, &e.ModifiedAt, &e.Version)
+	err := db.QueryRowContext(ctx, query, typ, name).Scan(&e.ID, &e.Type, &e.Name, &e.CreatedAt, &e.ModifiedAt, &e.Version)
 	if err != nil {
 		return nil, err
 	}
