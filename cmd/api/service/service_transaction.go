@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/yjmurakami/go-kakeibo/cmd/api/core"
+	"github.com/yjmurakami/go-kakeibo/cmd/api/core/dto"
 	"github.com/yjmurakami/go-kakeibo/cmd/api/core/openapi"
 	"github.com/yjmurakami/go-kakeibo/cmd/api/queryservice"
 	"github.com/yjmurakami/go-kakeibo/internal/clock"
@@ -63,15 +64,12 @@ func (s *transactionService) V1TransactionsPost(ctx context.Context, oaReq *open
 		return nil, err
 	}
 
-	oaRes := &openapi.V1TransactionsRes{
-		Id:         transaction.ID,
-		Date:       transaction.Date.Format(openapi.DateFormat),
-		Type:       category.Type,
-		CategoryId: transaction.CategoryID,
-		Amount:     transaction.Amount,
-		Note:       transaction.Note,
+	dtoTransaction, err := s.qs.SelectTransactionByID(s.db, transaction.ID)
+	if err != nil {
+		return nil, err
 	}
-	return oaRes, nil
+
+	return s.mapTransactionToOpenAPI(dtoTransaction), nil
 }
 
 func (s *transactionService) V1TransactionsGet(ctx context.Context, from time.Time, to time.Time, filter core.Filter) ([]*openapi.V1TransactionsRes, openapi.Metadata, error) {
@@ -82,18 +80,9 @@ func (s *transactionService) V1TransactionsGet(ctx context.Context, from time.Ti
 
 	// 権限チェック
 
-	// TODO 共通化
 	oaRes := []*openapi.V1TransactionsRes{}
 	for _, t := range transactions {
-		oa := &openapi.V1TransactionsRes{
-			Id:         t.ID,
-			Date:       t.Date.Format(openapi.DateFormat),
-			Type:       t.CategoryType,
-			CategoryId: t.CategoryID,
-			Amount:     t.Amount,
-			Note:       t.Note,
-		}
-		oaRes = append(oaRes, oa)
+		oaRes = append(oaRes, s.mapTransactionToOpenAPI(t))
 	}
 
 	return oaRes, metadata, nil
@@ -132,16 +121,7 @@ func (s *transactionService) V1TransactionsTransactionIdGet(ctx context.Context,
 
 	// TODO 権限チェック
 
-	// TODO 共通化
-	oaRes := &openapi.V1TransactionsRes{
-		Id:         transaction.ID,
-		Date:       transaction.Date.Format(openapi.DateFormat),
-		Type:       transaction.CategoryType,
-		CategoryId: transaction.CategoryID,
-		Amount:     transaction.Amount,
-		Note:       transaction.Note,
-	}
-	return oaRes, nil
+	return s.mapTransactionToOpenAPI(transaction), nil
 }
 
 func (s *transactionService) V1TransactionsTransactionIdPatch(ctx context.Context, transactionId int, oaReq *openapi.V1TransactionsTransactionIdPatchReq) (*openapi.V1TransactionsRes, error) {
@@ -194,13 +174,22 @@ func (s *transactionService) V1TransactionsTransactionIdPatch(ctx context.Contex
 		return nil, err
 	}
 
-	oaRes := &openapi.V1TransactionsRes{
-		Id:         transaction.ID,
-		Date:       transaction.Date.Format(openapi.DateFormat),
-		Type:       0, // TODO
-		CategoryId: transaction.CategoryID,
-		Amount:     transaction.Amount,
-		Note:       transaction.Note,
+	dtoTransaction, err := s.qs.SelectTransactionByID(s.db, transaction.ID)
+	if err != nil {
+		return nil, err
 	}
-	return oaRes, nil
+
+	return s.mapTransactionToOpenAPI(dtoTransaction), nil
+}
+
+func (s *transactionService) mapTransactionToOpenAPI(t *dto.Transaction) *openapi.V1TransactionsRes {
+	oa := &openapi.V1TransactionsRes{
+		Id:         t.ID,
+		Date:       t.Date.Format(openapi.DateFormat),
+		Type:       t.CategoryType,
+		CategoryId: t.CategoryID,
+		Amount:     t.Amount,
+		Note:       t.Note,
+	}
+	return oa
 }
