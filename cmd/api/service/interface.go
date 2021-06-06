@@ -2,7 +2,9 @@ package service
 
 import (
 	"context"
+	"time"
 
+	"github.com/yjmurakami/go-kakeibo/cmd/api/core"
 	"github.com/yjmurakami/go-kakeibo/cmd/api/core/openapi"
 	"github.com/yjmurakami/go-kakeibo/internal/entity"
 )
@@ -16,7 +18,7 @@ type SystemService interface {
 }
 
 type TransactionService interface {
-	V1TransactionsGet(ctx context.Context) ([]*openapi.V1TransactionsRes, error)
+	V1TransactionsGet(ctx context.Context, from time.Time, to time.Time, filter core.Filter) ([]*openapi.V1TransactionsRes, core.Metadata, error)
 	V1TransactionsPost(ctx context.Context, oaReq *openapi.V1TransactionsPostReq) (*openapi.V1TransactionsRes, error)
 	V1TransactionsTransactionIdDelete(ctx context.Context, transactionId int) error
 	V1TransactionsTransactionIdGet(ctx context.Context, transactionId int) (*openapi.V1TransactionsRes, error)

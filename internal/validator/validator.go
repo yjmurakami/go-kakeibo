@@ -44,10 +44,21 @@ func (v *Validator) Errors() map[string]string {
 	return v.errors
 }
 
-func (v *Validator) AddError(key, message string) {
+func (v *Validator) AddError(key string, message string) {
 	if _, ok := v.errors[key]; !ok {
 		v.errors[key] = message
 	}
+}
+
+func (v *Validator) Check(ok bool, key string, message string) {
+	if !ok {
+		v.AddError(key, message)
+	}
+}
+
+func InMap(value string, m map[string]bool) bool {
+	_, ok := m[value]
+	return ok
 }
 
 func (v *Validator) ValidateStruct(s interface{}) {

@@ -74,8 +74,29 @@ func (s *transactionService) V1TransactionsPost(ctx context.Context, oaReq *open
 	return oaRes, nil
 }
 
-func (s *transactionService) V1TransactionsGet(ctx context.Context) ([]*openapi.V1TransactionsRes, error) {
-	panic("not implemented") // TODO: Implement
+func (s *transactionService) V1TransactionsGet(ctx context.Context, from time.Time, to time.Time, filter core.Filter) ([]*openapi.V1TransactionsRes, core.Metadata, error) {
+	transactions, metadata, err := s.qs.SelectTransactions(s.db, from, to, filter)
+	if err != nil {
+		return nil, core.Metadata{}, err
+	}
+
+	// 権限チェック
+
+	// TODO 共通化
+	oaRes := []*openapi.V1TransactionsRes{}
+	for _, t := range transactions {
+		oa := &openapi.V1TransactionsRes{
+			Id:         t.ID,
+			Date:       t.Date.Format(openapi.DateFormat),
+			Type:       t.CategoryType,
+			CategoryId: t.CategoryID,
+			Amount:     t.Amount,
+			Note:       t.Note,
+		}
+		oaRes = append(oaRes, oa)
+	}
+
+	return oaRes, metadata, nil
 }
 
 func (s *transactionService) V1TransactionsTransactionIdDelete(ctx context.Context, transactionId int) error {

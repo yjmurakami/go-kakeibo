@@ -28,9 +28,9 @@ func clientError(w http.ResponseWriter, r *http.Request, status int, message int
 	}
 }
 
-func badRequestError(w http.ResponseWriter, r *http.Request, err error) {
+func badRequestError(w http.ResponseWriter, r *http.Request, errs map[string]string) {
 	status := http.StatusBadRequest
-	clientError(w, r, status, err.Error())
+	clientError(w, r, status, errs)
 }
 
 func unauthorizedError(w http.ResponseWriter, r *http.Request) {
@@ -51,11 +51,6 @@ func MethodNotAllowedError(w http.ResponseWriter, r *http.Request) {
 func conflictError(w http.ResponseWriter, r *http.Request) {
 	message := "unable to update the resource due to an edit conflict, please try again"
 	clientError(w, r, http.StatusConflict, message)
-}
-
-func unprocessableEntityError(w http.ResponseWriter, r *http.Request, errors map[string]string) {
-	status := http.StatusUnprocessableEntity
-	clientError(w, r, status, errors)
 }
 
 func serverError(w http.ResponseWriter, r *http.Request, err error) {

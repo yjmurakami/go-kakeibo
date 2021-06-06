@@ -6,13 +6,16 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
 
 	jwtgo "github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
+	"github.com/yjmurakami/go-kakeibo/cmd/api/core/openapi"
 	"github.com/yjmurakami/go-kakeibo/internal/clock"
+	"github.com/yjmurakami/go-kakeibo/internal/validator"
 )
 
 const (
@@ -204,11 +207,50 @@ func encodeJSON(w http.ResponseWriter, status int, src interface{}, header http.
 
 // URL parameter
 
-func getParamId(r *http.Request, key string) (int, error) {
+func readParamId(r *http.Request, key string) (int, error) {
 	id, err := strconv.Atoi(mux.Vars(r)[key])
 	if err != nil || id < 1 {
 		return 0, fmt.Errorf("the id is invalid")
 	}
 
 	return id, nil
+}
+
+func readString(qs url.Values, key string, defaultValue string) string {
+	s := qs.Get(key)
+	if s == "" {
+		return defaultValue
+	}
+
+	return s
+}
+
+func readInt(qs url.Values, key string, defaultValue int, v *validator.Validator) int {
+	s := qs.Get(key)
+	if s == "" {
+		return defaultValue
+	}
+
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		v.AddError(key, "must be an integer value")
+		return defaultValue
+	}
+
+	return i
+}
+
+func readDate(qs url.Values, key string, defaultValue time.Time, v *validator.Validator) time.Time {
+	s := qs.Get(key)
+	if s == "" {
+		return defaultValue
+	}
+
+	t, err := time.Parse(openapi.DateFormat, s)
+	if err != nil {
+		v.AddError(key, "must be an date value (yyyy-mm-dd)")
+		return defaultValue
+	}
+
+	return t
 }
