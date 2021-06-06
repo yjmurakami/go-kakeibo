@@ -9,6 +9,10 @@ import (
 	"github.com/yjmurakami/go-kakeibo/internal/entity"
 )
 
+type CategoryService interface {
+	V1CategoriesGet(ctx context.Context, categoryType int, filter core.Filter) ([]*openapi.V1CategoriesRes, openapi.Metadata, error)
+}
+
 type MiddlewareService interface {
 	Authenticate(ctx context.Context, userID int) (*entity.User, error)
 }

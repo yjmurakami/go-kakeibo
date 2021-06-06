@@ -155,6 +155,12 @@ components:
       properties:
         id:
           type: integer
+        type:
+          type: integer
+          description: >
+            Transaction type:
+              * 1 - income
+              * 2 - expense
         name:
           type: string
     V1HealthRes:

@@ -32,7 +32,12 @@ func initTransactionHandler(hc handlerConfig) handler.TransactionHandler {
 }
 
 func initCategoryHandler(hc handlerConfig) handler.CategoryHandler {
-	return nil
+	return handler.NewCategoryHandler(
+		service.NewCategoryService(
+			hc.db,
+			queryservice.NewCategoryQueryService(),
+		),
+	)
 }
 
 func initSystemHandler(hc handlerConfig) handler.SystemHandler {

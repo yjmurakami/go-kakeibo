@@ -5,5 +5,6 @@ package openapi
 
 type V1CategoriesRes struct {
 	Id   int    `json:"id"`
+	Type int    `json:"type"` // Transaction type:   * 1 - income   * 2 - expense
 	Name string `json:"name"`
 }
