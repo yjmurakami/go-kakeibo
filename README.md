@@ -109,7 +109,7 @@ curl -X POST -d '{"date": "2021-06-06", "category_id": 5, "amount": 1234, "note"
 ```
 # リクエスト
 # {id}を指定する
-curl -X PATCH -d '{"date": "2021-06-03", "category_id": 1, "amount": 9876, "note": "test changed"}' 'http://go-kakeibo-lb-868206596.ap-northeast-1.elb.amazonaws.com/api/v1/transactions/8' 
+curl -X PATCH -d '{"date": "2021-06-03", "category_id": 1, "amount": 9876, "note": "test changed"}' 'http://go-kakeibo-lb-868206596.ap-northeast-1.elb.amazonaws.com/api/v1/transactions/{id}' 
 ```
 
 <br>
@@ -119,7 +119,7 @@ curl -X PATCH -d '{"date": "2021-06-03", "category_id": 1, "amount": 9876, "note
 ```
 # リクエスト
 # {id}を指定する
-curl -X DELETE 'http://go-kakeibo-lb-868206596.ap-northeast-1.elb.amazonaws.com/api/v1/transactions/9' 
+curl -X DELETE 'http://go-kakeibo-lb-868206596.ap-northeast-1.elb.amazonaws.com/api/v1/transactions/{id}' 
 ```
 
 <br>
