@@ -17,6 +17,8 @@ paths:
               schema:
                 type: object
                 properties:
+                  metadata:
+                    $ref: "#/components/schemas/Metadata"
                   data:
                     type: array
                     items:
@@ -176,7 +178,6 @@ components:
       type: object
       required:
         - "date"
-        - "type"
         - "category_id"
         - "amount"
       properties:
@@ -184,16 +185,6 @@ components:
           type: string
           format: date
           x-go-validate: required,datetime=2006-01-02
-        type:
-          type: integer
-          enum:
-            - 1
-            - 2
-          description: >
-            Transaction type:
-              * 1 - income
-              * 2 - expense
-          x-go-validate: required,oneof=1 2
         category_id:
           type: integer
           x-go-validate: min=1,max=999999999
@@ -210,7 +201,6 @@ components:
       type: object
       required:
         - "date"
-        - "type"
         - "category_id"
         - "amount"
       properties:
@@ -219,17 +209,6 @@ components:
           nullable: true
           format: date
           x-go-validate: omitempty,datetime=2006-01-02
-        type:
-          type: integer
-          nullable: true
-          enum:
-            - 0
-            - 1
-          description: >
-            Transaction type:
-              * 1 - income
-              * 2 - expense
-          x-go-validate: omitempty,oneof=1 2
         category_id:
           type: integer
           nullable: true
