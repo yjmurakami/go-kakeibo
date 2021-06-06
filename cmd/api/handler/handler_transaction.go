@@ -127,7 +127,7 @@ func (h *transactionHandler) V1TransactionsTransactionIdDelete() http.HandlerFun
 		Message string `json:"message"`
 	}
 	return func(w http.ResponseWriter, r *http.Request) {
-		id, err := readParamId(r, "transactionId")
+		id, err := readParamId(r, "transaction_id")
 		if err != nil {
 			NotFoundError(w, r)
 			return
@@ -159,7 +159,7 @@ func (h *transactionHandler) V1TransactionsTransactionIdGet() http.HandlerFunc {
 		Data *openapi.V1TransactionsRes `json:"data"`
 	}
 	return func(w http.ResponseWriter, r *http.Request) {
-		id, err := readParamId(r, "transactionId")
+		id, err := readParamId(r, "transaction_id")
 		if err != nil {
 			NotFoundError(w, r)
 			return
@@ -193,7 +193,7 @@ func (h *transactionHandler) V1TransactionsTransactionIdPatch() http.HandlerFunc
 	return func(w http.ResponseWriter, r *http.Request) {
 		v := validator.New()
 
-		id, err := readParamId(r, "transactionId")
+		id, err := readParamId(r, "transaction_id")
 		if err != nil {
 			NotFoundError(w, r)
 			return

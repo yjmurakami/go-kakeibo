@@ -25,9 +25,9 @@ func newRouter(m handler.MiddlewareHandler, hc handlerConfig) http.Handler {
 
 	mux.HandleFunc("/api/v1/transactions", TransactionHandler.V1TransactionsGet()).Methods("GET")
 	mux.HandleFunc("/api/v1/transactions", TransactionHandler.V1TransactionsPost()).Methods("POST")
-	mux.HandleFunc("/api/v1/transactions/{transactionId}", TransactionHandler.V1TransactionsTransactionIdDelete()).Methods("DELETE")
-	mux.HandleFunc("/api/v1/transactions/{transactionId}", TransactionHandler.V1TransactionsTransactionIdGet()).Methods("GET")
-	mux.HandleFunc("/api/v1/transactions/{transactionId}", TransactionHandler.V1TransactionsTransactionIdPatch()).Methods("PATCH")
+	mux.HandleFunc("/api/v1/transactions/{transaction_id}", TransactionHandler.V1TransactionsTransactionIdDelete()).Methods("DELETE")
+	mux.HandleFunc("/api/v1/transactions/{transaction_id}", TransactionHandler.V1TransactionsTransactionIdGet()).Methods("GET")
+	mux.HandleFunc("/api/v1/transactions/{transaction_id}", TransactionHandler.V1TransactionsTransactionIdPatch()).Methods("PATCH")
 
 	return mux
 }

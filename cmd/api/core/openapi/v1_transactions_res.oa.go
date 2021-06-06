@@ -7,7 +7,7 @@ type V1TransactionsRes struct {
 	Id         int    `json:"id"`
 	Date       string `json:"date"`
 	Type       int    `json:"type"` // Transaction type:   * 1 - income   * 2 - expense
-	CategoryId int    `json:"categoryId"`
+	CategoryId int    `json:"category_id"`
 	Amount     int    `json:"amount"`
 	Note       string `json:"note"`
 }
