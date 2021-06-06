@@ -199,10 +199,6 @@ components:
           x-go-validate: max=1000
     V1TransactionsTransactionIdPatchReq:
       type: object
-      required:
-        - "date"
-        - "category_id"
-        - "amount"
       properties:
         date:
           type: string
