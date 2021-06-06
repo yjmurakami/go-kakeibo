@@ -184,12 +184,14 @@ func (s *transactionService) V1TransactionsTransactionIdPatch(ctx context.Contex
 
 func (s *transactionService) mapTransactionToOpenAPI(t *dto.Transaction) *openapi.V1TransactionsRes {
 	oa := &openapi.V1TransactionsRes{
-		Id:         t.ID,
-		Date:       t.Date.Format(openapi.DateFormat),
-		Type:       t.CategoryType,
-		CategoryId: t.CategoryID,
-		Amount:     t.Amount,
-		Note:       t.Note,
+		Id:           t.ID,
+		Date:         t.Date.Format(openapi.DateFormat),
+		Type:         t.CategoryType,
+		TypeName:     openapi.CategoryTypes[t.CategoryType],
+		CategoryId:   t.CategoryID,
+		CategoryName: t.CategoryName,
+		Amount:       t.Amount,
+		Note:         t.Note,
 	}
 	return oa
 }

@@ -4,10 +4,12 @@
 package openapi
 
 type V1TransactionsRes struct {
-	Id         int    `json:"id"`
-	Date       string `json:"date"`
-	Type       int    `json:"type"` // Transaction type:   * 1 - income   * 2 - expense
-	CategoryId int    `json:"category_id"`
-	Amount     int    `json:"amount"`
-	Note       string `json:"note"`
+	Id           int    `json:"id"`
+	Date         string `json:"date"`
+	Type         int    `json:"type"` // Transaction type:   * 1 - income   * 2 - expense
+	TypeName     string `json:"type_name"`
+	CategoryId   int    `json:"category_id"`
+	CategoryName string `json:"category_name"`
+	Amount       int    `json:"amount"`
+	Note         string `json:"note"`
 }

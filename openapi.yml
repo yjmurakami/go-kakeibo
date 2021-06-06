@@ -161,6 +161,8 @@ components:
             Transaction type:
               * 1 - income
               * 2 - expense
+        type_name:
+          type: string
         name:
           type: string
     V1HealthRes:
@@ -253,15 +255,16 @@ components:
           format: date
         type:
           type: integer
-          enum:
-            - 0
-            - 1
           description: >
             Transaction type:
               * 1 - income
               * 2 - expense
+        type_name:
+          type: string
         category_id:
           type: integer
+        category_name:
+          type: string
         amount:
           type: integer
         note:

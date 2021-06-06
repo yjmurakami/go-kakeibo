@@ -30,9 +30,10 @@ func (s *categoryService) V1CategoriesGet(ctx context.Context, categoryType int,
 	oaRes := []*openapi.V1CategoriesRes{}
 	for _, c := range categories {
 		oa := &openapi.V1CategoriesRes{
-			Id:   c.ID,
-			Type: c.Type,
-			Name: c.Name,
+			Id:       c.ID,
+			Type:     c.Type,
+			TypeName: openapi.CategoryTypes[c.Type],
+			Name:     c.Name,
 		}
 		oaRes = append(oaRes, oa)
 	}
