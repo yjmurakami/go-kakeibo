@@ -76,7 +76,7 @@ func (h *transactionHandler) V1TransactionsGet() http.HandlerFunc {
 		core.Filter
 	}
 	type response struct {
-		Metadata core.Metadata                `json:"metadata"`
+		Metadata openapi.Metadata             `json:"metadata"`
 		Data     []*openapi.V1TransactionsRes `json:"data"`
 	}
 	return func(w http.ResponseWriter, r *http.Request) {

@@ -30,7 +30,7 @@ func {{classname}}Value(key {{dataType}}) string {
 {{#description}}// {{classname}} - {{{description}}}{{/description}}
 type {{classname}} struct {
 {{#vars}}
-	{{name}} {{#isNullable}}*{{/isNullable}}{{{dataType}}} `json:"{{baseName}}"{{#vendorExtensions.x-go-validate}} validate:"{{{.}}}"{{/vendorExtensions.x-go-validate}}` {{#description}}// {{{description}}}{{/description}}
+	{{name}} {{#isNullable}}*{{/isNullable}}{{{dataType}}} `json:"{{baseName}}{{#vendorExtensions.x-go-omitempty}},omitempty{{/vendorExtensions.x-go-omitempty}}"{{#vendorExtensions.x-go-validate}} validate:"{{{.}}}"{{/vendorExtensions.x-go-validate}}` {{#description}}// {{{description}}}{{/description}}
 {{/vars}}
 }
 {{/isEnum}}{{/model}}{{/models}}

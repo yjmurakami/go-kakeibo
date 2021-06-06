@@ -47,6 +47,8 @@ paths:
               schema:
                 type: object
                 properties:
+                  metadata:
+                    $ref: "#/components/schemas/Metadata"
                   data:
                     type: array
                     items:
@@ -130,6 +132,24 @@ components:
       schema:
         type: integer
   schemas:
+    Metadata:
+      type: object
+      properties:
+        current_page:
+          type: integer
+          x-go-omitempty: true
+        page_size:
+          type: integer
+          x-go-omitempty: true
+        first_page:
+          type: integer
+          x-go-omitempty: true
+        last_page:
+          type: integer
+          x-go-omitempty: true
+        total_records:
+          type: integer
+          x-go-omitempty: true
     V1CategoriesRes:
       type: object
       properties:

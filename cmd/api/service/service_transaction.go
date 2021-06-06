@@ -74,10 +74,10 @@ func (s *transactionService) V1TransactionsPost(ctx context.Context, oaReq *open
 	return oaRes, nil
 }
 
-func (s *transactionService) V1TransactionsGet(ctx context.Context, from time.Time, to time.Time, filter core.Filter) ([]*openapi.V1TransactionsRes, core.Metadata, error) {
+func (s *transactionService) V1TransactionsGet(ctx context.Context, from time.Time, to time.Time, filter core.Filter) ([]*openapi.V1TransactionsRes, openapi.Metadata, error) {
 	transactions, metadata, err := s.qs.SelectTransactions(s.db, from, to, filter)
 	if err != nil {
-		return nil, core.Metadata{}, err
+		return nil, openapi.Metadata{}, err
 	}
 
 	// 権限チェック

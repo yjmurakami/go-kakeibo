@@ -7,6 +7,7 @@ import (
 
 	"github.com/yjmurakami/go-kakeibo/cmd/api/core"
 	"github.com/yjmurakami/go-kakeibo/cmd/api/core/dto"
+	"github.com/yjmurakami/go-kakeibo/cmd/api/core/openapi"
 	"github.com/yjmurakami/go-kakeibo/internal/database"
 )
 
@@ -52,7 +53,7 @@ func (q *transactionQueryService) SelectTransactionByID(db database.DB, id int) 
 }
 
 // Generated from SelectTransactions.sql
-func (q *transactionQueryService) SelectTransactions(db database.DB, from time.Time, to time.Time, filter core.Filter) ([]*dto.Transaction, core.Metadata, error) {
+func (q *transactionQueryService) SelectTransactions(db database.DB, from time.Time, to time.Time, filter core.Filter) ([]*dto.Transaction, openapi.Metadata, error) {
 	query := fmt.Sprintf(`
 		SELECT
 			COUNT(*) OVER() total_records
@@ -83,7 +84,7 @@ func (q *transactionQueryService) SelectTransactions(db database.DB, from time.T
 
 	rows, err := db.QueryContext(ctx, query, from, to, filter.Limit(), filter.Offset())
 	if err != nil {
-		return nil, core.Metadata{}, err
+		return nil, openapi.Metadata{}, err
 	}
 	defer rows.Close()
 
@@ -93,16 +94,16 @@ func (q *transactionQueryService) SelectTransactions(db database.DB, from time.T
 		d := dto.Transaction{}
 		err = rows.Scan(&totalRecords, &d.ID, &d.UserID, &d.Date, &d.Amount, &d.Note, &d.CreatedAt, &d.ModifiedAt, &d.Version, &d.CategoryID, &d.CategoryType, &d.CategoryName)
 		if err != nil {
-			return nil, core.Metadata{}, err
+			return nil, openapi.Metadata{}, err
 		}
 		s = append(s, &d)
 	}
 
 	err = rows.Err()
 	if err != nil {
-		return nil, core.Metadata{}, err
+		return nil, openapi.Metadata{}, err
 	}
 
-	metadata := core.CalculateMetadata(totalRecords, filter.Page, filter.PageSize)
+	metadata := openapi.CalculateMetadata(totalRecords, filter.Page, filter.PageSize)
 	return s, metadata, nil
 }
