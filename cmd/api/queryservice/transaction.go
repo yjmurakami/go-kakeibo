@@ -55,25 +55,24 @@ func (q *transactionQueryService) SelectTransactionByID(db database.DB, id int) 
 func (q *transactionQueryService) SelectTransactions(db database.DB, from time.Time, to time.Time, filter core.Filter) ([]*dto.Transaction, core.Metadata, error) {
 	query := fmt.Sprintf(`
 		SELECT
-		  COUNT(*) OVER() total_records
-		  , t.id
-		  , t.user_id
-		  , t.date
-		  , t.amount
-		  , t.note
-		  , t.created_at
-		  , t.modified_at
-		  , t.version
-		  , t.category_id
-		  , c.type category_type
-		  , c.name category_name
+			COUNT(*) OVER() total_records
+			, t.id
+			, t.user_id
+			, t.date
+			, t.amount
+			, t.note
+			, t.created_at
+			, t.modified_at
+			, t.version
+			, t.category_id
+			, c.type category_type
+			, c.name category_name
 		FROM
-		  kakeibo.transactions t
-		  INNER JOIN kakeibo.categories c 
-		    ON  t.category_id = c.id
+			kakeibo.transactions t
+			INNER JOIN kakeibo.categories c 
+				ON  t.category_id = c.id
 		WHERE
-		  (t.date >= ? OR ? IS NULL)
-		  AND (t.date <= ? OR ? IS NULL)
+			t.date BETWEEN ? AND ?
 		ORDER BY
 		  %s %s, t.id
 		LIMIT ? OFFSET ?
@@ -82,7 +81,7 @@ func (q *transactionQueryService) SelectTransactions(db database.DB, from time.T
 	ctx, cancel := context.WithTimeout(context.Background(), database.QueryTimeout)
 	defer cancel()
 
-	rows, err := db.QueryContext(ctx, query, from, from, to, to, filter.Limit(), filter.Offset())
+	rows, err := db.QueryContext(ctx, query, from, to, filter.Limit(), filter.Offset())
 	if err != nil {
 		return nil, core.Metadata{}, err
 	}

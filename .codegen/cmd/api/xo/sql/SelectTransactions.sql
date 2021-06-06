@@ -27,8 +27,7 @@ FROM
   INNER JOIN kakeibo.categories c 
     ON  t.category_id = c.id
 WHERE
-  (t.date >= %%from time.Time%% OR %%from time.Time%% IS NULL)
-  AND (t.date <= %%to time.Time%% OR %%to time.Time%% IS NULL)
+  t.date BETWEEN %%from time.Time%% AND %%to time.Time%%
 -- TODO 手動で実装
 -- ORDER BY
 --   %s %s, t.id
