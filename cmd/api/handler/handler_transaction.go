@@ -91,9 +91,12 @@ func (h *transactionHandler) V1TransactionsGet() http.HandlerFunc {
 				PageSize: readInt(qs, "page_size", 20, v),
 				Sort:     readString(qs, "sort", "id"),
 				SortSafelist: map[string]bool{
-					"id":          true,
-					"date":        true,
-					"category_id": true,
+					"id":           true,
+					"-id":          true,
+					"date":         true,
+					"-date":        true,
+					"category_id":  true,
+					"-category_id": true,
 				},
 			},
 		}
