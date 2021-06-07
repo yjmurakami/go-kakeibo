@@ -9,6 +9,9 @@
 
 http://go-kakeibo-lb-868206596.ap-northeast-1.elb.amazonaws.com
 
+サンプル  
+http://go-kakeibo-lb-868206596.ap-northeast-1.elb.amazonaws.com/api/v1/transactions?from=2021-06-01&to=2021-06-30&page=1&page_size=3&sort=-date
+
 <br>
 
 ## JSONフォーマット
