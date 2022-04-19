@@ -7,6 +7,8 @@
 
 ## URL
 
+※今は動いていません
+
 http://go-kakeibo-lb-868206596.ap-northeast-1.elb.amazonaws.com
 
 サンプル  
